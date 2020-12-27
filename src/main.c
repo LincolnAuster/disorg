@@ -22,7 +22,7 @@ struct KeyValue * key_value_read(char *line);
 /* output given string to stderr and exit */
 static void
 die(char *string) {
-	fprintf(stderr, string);
+	fprintf(stderr, "%s", string);
 	exit(1);
 }
 
