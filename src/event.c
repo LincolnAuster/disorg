@@ -7,6 +7,61 @@
 #include "conf.h"
 #include "event.h"
 
+/* scan a string for !KEY VALUE pairs, return KeyValue struct */
+struct KeyValue *
+key_value_read(char* line)
+{
+	char c;
+	bool first_of_line, directive_key, directive_value;
+	first_of_line = true;
+	directive_key = directive_value = false;
+
+	size_t key_size, val_size;
+	key_size = val_size = INITIAL_BUFFER_SIZE;
+	char *key = (char *) malloc(key_size * sizeof(char));
+	char *val = (char *) malloc(val_size * sizeof(char));
+	key[0] = val[0] = '\0';
+
+	int len = strlen(line);
+	for (int i = 0; i < len; i++) {
+		c = line[i];
+
+		if (c == ' ' && directive_key) {
+			directive_key = false;
+			directive_value = true;
+			continue;
+		}
+
+		if (directive_key)
+			buffer_append(&key, c, &key_size);
+		else if (directive_value)
+			buffer_append(&val, c, &val_size);
+
+		if (first_of_line && c == '!')
+			directive_key=true;
+	}
+
+	struct KeyValue *kv = malloc(sizeof(struct KeyValue));
+	kv->key = key;
+	kv->val = val;
+	return kv;
+}
+
+/* append given character to the buffer, resize if necessary */
+void
+buffer_append(char **buffer, char c, size_t *capacity)
+{
+	int text_len = strlen(*buffer);
+	if (text_len + 2 > *capacity) {
+		*capacity *= 2;
+		char *new_buffer = realloc(*buffer, *capacity);
+		*buffer = new_buffer;
+	}
+
+	(*buffer)[text_len++] = c;
+	(*buffer)[text_len] = '\0';
+}
+
 Event*    
 event_new_empty(const struct Config *conf)
 {
@@ -30,6 +85,21 @@ event_new_empty(const struct Config *conf)
 	e->year        = current_year;                                                                
 
 	return e;    
+}
+
+/* loop through file line-by-line to fill fields of event */
+void
+event_fill_from_text(Event *e, FILE *f, const struct Config *c)
+{
+	char  *file_line    = NULL;
+	size_t file_bufsize = 0;
+	ssize_t len;
+	struct KeyValue *pair = NULL;
+	while ((len = getline(&file_line, &file_bufsize, f)) > 0) {
+		file_line[--len] = '\0'; /* strip newline */
+		pair = key_value_read(file_line);
+		event_insert(e, pair, c);
+	}
 }
 
 /* write the event to stdout with some pretty formatting ✨ */
