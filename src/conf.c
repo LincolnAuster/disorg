@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -46,6 +45,12 @@ match_int(char location_char, const char *string, const char *format_string)
 	if (delim == '\0')
 		return 0;
 
+	return get_nth(location, delim, string);
+}
+
+int get_nth(int location, const char delim, const char *string)
+{
+	int len = strlen(string);
 	char *modifiable_copy = malloc(++len * sizeof(char));
 	strcpy(modifiable_copy, string);
 
