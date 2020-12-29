@@ -16,4 +16,4 @@ int make_four_digits(int);
 bool is_alphanumeric(char);
 bool is_ascii_int(char);
 /* should probably go into event.h */
-unsigned int match_int(int, const char *, const char *);
+unsigned int match_int(const char, const char *, const char *);

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -23,20 +24,23 @@ make_four_digits(int n)
 
 /* given a format string (such as H:M:S) that corresponds to user data
  * (for instance 3:30:00), this returns the integer indicated by the 
- * marker character. Returns 0 if not matched. Very poorly written, it
- * relies on a single non-alphanumeric delimiter. TODO move the int location
- * to a char in the format_string
+ * marker character. Returns 0 if not matched. 
  */
 unsigned int
-match_int(int location, const char *string, const char *format_string)
+match_int(char location_char, const char *string, const char *format_string)
 {
-	char delim = '\0';
+	bool increment = true;
+	int location = 0;
+	char delim   = '\0';
 	int len = strlen(format_string);
 	for (int i = 0; i < len; i++) {
 		if (!is_alphanumeric(format_string[i])) {
 			delim = format_string[i];
-			continue;
+			if (increment) location++;
 		}
+
+		if (location_char == format_string[i])
+			increment = false;
 	}
         
 	if (delim == '\0')
@@ -45,7 +49,6 @@ match_int(int location, const char *string, const char *format_string)
 	char *modifiable_copy = malloc(++len * sizeof(char));
 	strcpy(modifiable_copy, string);
 
-	int i = 0;
 	char *result = { '\0' };
 	const char delim_str[2] = {delim, '\0'};
 	for (int i = 0; i < location + 1; i++) {

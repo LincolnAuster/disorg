@@ -1,8 +1,8 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <stdbool.h>
-#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "conf.h"
 #include "event.h"
@@ -130,18 +130,18 @@ event_insert(Event* e, struct KeyValue *k, const Config *conf)
 {                                       
 	if (strcmp(k->key, "TITLE") == 0) {
 		e->title = (char *) malloc(strlen(k->val) * sizeof(char));
-		strcpy(e->title, k->val);
+		strncpy(e->title, k->val, strlen(k->val));
 	} else if (strcmp(k->key, "DESCRIPTION") == 0) {
 		e->description = (char *) malloc(strlen(k->val) * sizeof(char));
-		strcpy(e->description, k->val);
+		strncpy(e->description, k->val, strlen(k->val));
 	} else if (strcmp(k->key, "TIME") == 0) {
-		e->hour   = match_int(0, k->val, conf->time_format);
-		e->minute = match_int(1, k->val, conf->time_format);
+		e->hour   = match_int('H', k->val, conf->time_format);
+		e->minute = match_int('M', k->val, conf->time_format);
 	} else if (strcmp(k->key, "DATE") == 0) {
-		int day = match_int(0, k->val, conf->date_format);
-		int month = match_int(1, k->val, conf->date_format);
-		int year = match_int(2, k->val, conf->date_format);
-		if (day == 0)                                            
+		int day   = match_int('D', k->val, conf->date_format);
+		int month = match_int('M', k->val, conf->date_format);
+		int year  = match_int('Y', k->val, conf->date_format);
+		if (day == 0)
 			day = e->day;
 		if (month == 0)
 			month = e->month;

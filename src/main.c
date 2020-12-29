@@ -1,11 +1,7 @@
-/* Reads filenames in from stdin. The files are then parsed into a
- * hash table, and aggregation is performed according to command
- * line arguments.
- */
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #include "conf.h"
@@ -37,8 +33,9 @@ main(int argc, char *argv[])
 	 * parse the event file and hash it by time.
 	 */
 	ssize_t len;
-	size_t bufsize = 0;
+	size_t bufsize;
 	char* stdin_line = NULL;
+	bufsize = 0;
 
 	EventTree *et_root = eventtree_new();
 	int i = 0;
