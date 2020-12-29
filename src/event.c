@@ -63,7 +63,7 @@ buffer_append(char **buffer, char c, size_t *capacity)
 }
 
 Event*    
-event_new_empty(const struct Config *conf)
+event_new_empty(const Config *conf)
 {
         time_t s = time(NULL);
 
@@ -89,7 +89,7 @@ event_new_empty(const struct Config *conf)
 
 /* loop through file line-by-line to fill fields of event */
 void
-event_fill_from_text(Event *e, FILE *f, const struct Config *c)
+event_fill_from_text(Event *e, FILE *f, const Config *c)
 {
 	char  *file_line    = NULL;
 	size_t file_bufsize = 0;
@@ -126,7 +126,7 @@ event_display(Event *e)
 
 /* parse a key value pair into Event fields */                  
 void                                                                         
-event_insert(Event* e, struct KeyValue *k, const struct Config *conf)
+event_insert(Event* e, struct KeyValue *k, const Config *conf)
 {                                       
 	if (strcmp(k->key, "TITLE") == 0) {
 		e->title = (char *) malloc(strlen(k->val) * sizeof(char));
@@ -182,4 +182,49 @@ event_compare(Event *a, Event *b)
 	long int b_unix = mktime(&t);
 
 	return a_unix - b_unix;
+}
+
+/* return new empty event tree */
+EventTree *
+eventtree_new()
+{
+	EventTree *et = malloc(sizeof(EventTree));
+	et->event = NULL;
+	et->left  = NULL;
+	et->right = NULL;
+	return et;
+}
+
+EventTree *
+eventtree_new_from_event(Event *e) {
+	EventTree *et = malloc(sizeof(EventTree));
+	et->event = e;
+	et->left = NULL;
+	et->right = NULL;
+	return et;
+}
+
+/* insert an event into provided node */
+EventTree *
+eventtree_insert(EventTree *et, Event *e)
+{
+	if (et->event == NULL) return eventtree_new_from_event(e);
+
+	if (event_compare(et->event, e) == 0) return et;
+	if (event_compare(et->event, e) < 0)
+		et->left = eventtree_insert(et, e);
+	if (event_compare(et->event, e) > 0)
+		et->right = eventtree_insert(et, e);
+}
+
+/* perform an in-order traversal of the provided tree and
+ * call the specified function on the values.
+ */
+void
+eventtree_in_order(EventTree *et, void (*fun)(Event *))
+{
+	if (et == NULL) return;
+	eventtree_in_order(et->left, fun);
+	if (et->event != NULL) fun(et->event);
+	eventtree_in_order(et->right, fun);
 }

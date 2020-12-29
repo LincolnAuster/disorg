@@ -28,7 +28,7 @@ Configuration is done through a shell script at `~/.config/disorg/disorg`. For a
 A single binary parses event or wiki files as specified by the command line arguments given by the `disorg.sh` script.
 
 ## TODOs
-* implement stuff in the README
+* implement stuff in the README - this means sorting
 * add stuff to the README
 
 ## Speculative Future Stuff

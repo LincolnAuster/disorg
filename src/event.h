@@ -12,6 +12,12 @@ typedef struct {
 	unsigned int year;
 } Event;
 
+typedef struct EventTree {
+	Event     *event;
+	struct EventTree *left;
+	struct EventTree *right;
+} EventTree;
+
 /* Stores a key value pair that can be returned from a parsing function. */
 struct KeyValue {
 	char *key;
@@ -21,9 +27,14 @@ struct KeyValue {
 struct KeyValue *key_value_read(char *);
 void buffer_append(char **, char, size_t *);
 
-Event *event_new_empty(const struct Config *);
+Event *event_new_empty(const Config *);
 void   event_display(Event *);
-void   event_insert(Event *, struct KeyValue *, const struct Config *);
-void   event_fill_from_text(Event *, FILE *, const struct Config *);
+void   event_insert(Event *, struct KeyValue *, const Config *);
+void   event_fill_from_text(Event *, FILE *, const Config *);
 
 int event_compare(Event *, Event *);
+
+EventTree *eventtree_new();
+EventTree *eventtree_insert(EventTree *, Event *);
+EventTree *eventtree_new_from_event(Event *); 
+void       eventtree_in_order(EventTree *, void (*)(Event *));
