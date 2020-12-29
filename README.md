@@ -1,5 +1,5 @@
-# disorg
-org-mode but disorganized and bad - a tool to maintain a schedule and agenda over a directory of plain-text files
+<h1 style="text-align: center">disorg</h1>
+<p style="text-align: center">emacs' org-mode but poorly written and disorganized<br/>a tool to maintain a schedule and agenda over a directory of plain-text files</p>
 
 ## Usage
 When called over a directory (by default ~/.disorg, or as specified in config), the binary will aggregate events and wiki pages. Events, marked by a .ev file extension, define a single time associated with a set of metadata (title, description, etc) as well as any free form text. Wiki files provide a searchable database of information, indexed by name.
@@ -28,9 +28,4 @@ Configuration is done through a shell script at `~/.config/disorg/disorg`. For a
 A single binary parses event or wiki files as specified by the command line arguments given by the `disorg.sh` script.
 
 ## TODOs
-* implement stuff in the README - this means sorting
-* add stuff to the README
-
-## Speculative Future Stuff
-A GTK interface could be useful
-Need to figure out a good system for repeating events
+* ✨ make software good ✨
