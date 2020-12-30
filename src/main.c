@@ -43,9 +43,9 @@ main(int argc, char *argv[])
 	char* stdin_line = NULL;
 	bufsize = 0;
 
-	EventTree *et_root = eventtree_new();
+	EventTree *et_root = NULL;
 	int i = 0;
-	
+
 	while ((len = getline(&stdin_line, &bufsize, stdin)) > 0) {
 		stdin_line[--len] = '\0'; /* strip newline from path */
 
@@ -53,11 +53,11 @@ main(int argc, char *argv[])
 		if (event_file == NULL) continue;
 
 		Event* cur_event = event_new_empty(&conf);
-		eventtree_insert(et_root, cur_event);
-
 		event_fill_from_text(cur_event, event_file, &conf);
+
+		printf("Parsing  : %s\n", cur_event->title);
+		et_root = eventtree_insert(et_root, cur_event);
 		fclose(event_file);
-		event_display(cur_event);
 	}
 
 	eventtree_in_order(et_root, &event_display);

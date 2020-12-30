@@ -154,7 +154,7 @@ event_display(Event *e)
 /* parse a key value pair into Event fields */                  
 void                                                                         
 event_insert(Event* e, struct KeyValue *k, const Config *conf)
-{                                       
+{
 	if (strcmp(k->key, "TITLE") == 0) {
 		e->title = (char *) malloc(strlen(k->val) * sizeof(char));
 		strncpy(e->title, k->val, strlen(k->val));
@@ -199,7 +199,7 @@ event_compare(Event *a, Event *b)
 {
 	struct tm t;
 	t.tm_year  = a->year;
-	t.tm_mon   = a->month - 1;
+	t.tm_mon   = a->month;
 	t.tm_mday  = a->day;
 	t.tm_hour  = a->hour;
 	t.tm_min   = a->minute;
@@ -208,7 +208,7 @@ event_compare(Event *a, Event *b)
 	long int a_unix = mktime(&t);
 
 	t.tm_year  = b->year;
-	t.tm_mon   = b->month - 1;
+	t.tm_mon   = b->month;
 	t.tm_mday  = b->day;
 	t.tm_hour  = b->hour;
 	t.tm_min   = b->minute;
@@ -243,13 +243,15 @@ eventtree_new_from_event(Event *e) {
 EventTree *
 eventtree_insert(EventTree *et, Event *e)
 {
-	if (et->event == NULL) return eventtree_new_from_event(e);
+	if (et == NULL) return eventtree_new_from_event(e);
+	int cmp = event_compare(et->event, e);
 
-	if (event_compare(et->event, e) == 0) return et;
-	if (event_compare(et->event, e) < 0)
-		et->left = eventtree_insert(et, e);
-	if (event_compare(et->event, e) > 0)
-		et->right = eventtree_insert(et, e);
+	if (cmp < 0)
+		et->left  = eventtree_insert(et->left, e);
+	else if (cmp > 0)
+		et->right = eventtree_insert(et->right, e);
+
+	return et;
 }
 
 /* perform an in-order traversal of the provided tree and
@@ -259,7 +261,7 @@ void
 eventtree_in_order(EventTree *et, void (*fun)(Event *))
 {
 	if (et == NULL) return;
-	eventtree_in_order(et->left, fun);
-	if (et->event != NULL) fun(et->event);
 	eventtree_in_order(et->right, fun);
+	fun(et->event);
+	eventtree_in_order(et->left, fun);
 }
