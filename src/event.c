@@ -163,18 +163,18 @@ event_insert(Event* e, struct KeyValue *k, const Config *conf)
 		e->hour   = match_int('H', k->val, conf->time_format);
 		e->minute = match_int('M', k->val, conf->time_format);
 	} else if (strcmp(k->key, "DATE") == 0) {
-		event_insert_time(e, k->val, conf);
+		event_insert_date(e, k->val, conf);
 	} else if (strcmp(k->key, "MISC") == 0) {
 		event_insert_misc(e, k->val, conf);
 	}
 }
 
 void
-event_insert_time(Event *e, const char *time, const Config *conf)
+event_insert_date(Event *e, const char *date, const Config *conf)
 {
-	int day   = match_int('D', time, conf->date_format);
-	int month = match_int('M', time, conf->date_format);
-	int year  = match_int('Y', time, conf->date_format);
+	int day   = match_int('D', date, conf->date_format);
+	int month = match_int('M', date, conf->date_format);
+	int year  = match_int('Y', date, conf->date_format);
 	if (day == 0)
 		day = e->day;
 	if (month == 0)
@@ -195,11 +195,10 @@ void
 event_insert_misc(Event *e, char *text, const Config *conf)
 {
 	size_t capacity = sizeof(e->misc) / sizeof(char);
-	if (e->misc == NULL) {
+	if (e->misc == NULL)
 		e->misc = text;
-	} else {
+	else
 		buffer_append_str(&(e->misc), text, &capacity);
-	}
 
 	buffer_append(&(e->misc), '\n', &capacity);
 
