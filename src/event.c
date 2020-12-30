@@ -163,33 +163,46 @@ event_insert(Event* e, struct KeyValue *k, const Config *conf)
 		e->hour   = match_int('H', k->val, conf->time_format);
 		e->minute = match_int('M', k->val, conf->time_format);
 	} else if (strcmp(k->key, "DATE") == 0) {
-		int day   = match_int('D', k->val, conf->date_format);
-		int month = match_int('M', k->val, conf->date_format);
-		int year  = match_int('Y', k->val, conf->date_format);
-		if (day == 0)
-			day = e->day;
-		if (month == 0)
-			month = e->month;
-		if (year == 0)
-			year = e->year;
-
-		e->day   = day;
-		e->month = month;
-		e->year  = year;
-
-		if (conf_enabled(conf->four_digit_year)) {
-			e->year = make_four_digits(e->year);
-		}
+		event_insert_time(e, k->val, conf);
 	} else if (strcmp(k->key, "MISC") == 0) {
-		size_t capacity = sizeof(e->misc) / sizeof(char);
-		if (e->misc == NULL) {
-			e->misc = k->val;
-		} else {
-			buffer_append_str(&(e->misc), k->val, &capacity);
-		}
-
-		buffer_append(&(e->misc), '\n', &capacity);
+		event_insert_misc(e, k->val, conf);
 	}
+}
+
+void
+event_insert_time(Event *e, const char *time, const Config *conf)
+{
+	int day   = match_int('D', time, conf->date_format);
+	int month = match_int('M', time, conf->date_format);
+	int year  = match_int('Y', time, conf->date_format);
+	if (day == 0)
+		day = e->day;
+	if (month == 0)
+		month = e->month;
+	if (year == 0)
+		year = e->year;
+
+	e->day   = day;
+	e->month = month;
+	e->year  = year;
+
+	if (conf_enabled(conf->four_digit_year)) {
+		e->year = make_four_digits(e->year);
+	}
+}
+
+void
+event_insert_misc(Event *e, char *text, const Config *conf)
+{
+	size_t capacity = sizeof(e->misc) / sizeof(char);
+	if (e->misc == NULL) {
+		e->misc = text;
+	} else {
+		buffer_append_str(&(e->misc), text, &capacity);
+	}
+
+	buffer_append(&(e->misc), '\n', &capacity);
+
 }
 
 /* returns 0 if equal, below if a < b and 1 if b > a */

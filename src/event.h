@@ -32,6 +32,8 @@ void buffer_append_str(char **, char *, size_t *);
 Event *event_new_empty(const Config *);
 void   event_display(Event *);
 void   event_insert(Event *, struct KeyValue *, const Config *);
+void   event_insert_time(Event *, const char *, const Config *);
+void   event_insert_misc(Event *, char *, const Config *);
 void   event_fill_from_text(Event *, FILE *, const Config *);
 
 int event_compare(Event *, Event *);
