@@ -146,12 +146,10 @@ event_display(Event *e)
 	printf("%02i", e->day);
 	printf("/%02i", e->month);
 	printf("/%02i", e->year);
-	printf("\n");
-
-	printf("\n");
+	printf("\n\n");
 }
 
-/* parse a key value pair into Event fields */                  
+/* parse a KeyValue into Event fields */                  
 void                                                                         
 event_insert(Event* e, struct KeyValue *k, const Config *conf)
 {
@@ -183,13 +181,14 @@ event_insert(Event* e, struct KeyValue *k, const Config *conf)
 			e->year = make_four_digits(e->year);
 		}
 	} else if (strcmp(k->key, "MISC") == 0) {
-		size_t capacity = strlen(k->val);
+		size_t capacity = sizeof(e->misc) / sizeof(char);
 		if (e->misc == NULL) {
 			e->misc = k->val;
 		} else {
-			size_t capacity = strlen(e->misc);
 			buffer_append_str(&(e->misc), k->val, &capacity);
 		}
+
+		buffer_append(&(e->misc), '\n', &capacity);
 	}
 }
 

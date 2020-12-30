@@ -20,14 +20,15 @@ die(char *string) {
 int
 main(int argc, char *argv[])
 {
-	char *name = NULL;
+	char *target = NULL;
 	if (argc == 2)
-		name = argv[1];
+		target = argv[1];
 
-	if ((name != NULL) && (strcmp(name, "--help") == 0)) {
+	if ((target != NULL) && (strcmp(target, "--help") == 0)) {
 		printf("Usage: %s [name]\n", argv[0]);
 		return 0;
 	}
+
 
 	Config conf;
 	conf.date_format     = getenv("DATE_FORMAT");
@@ -55,7 +56,12 @@ main(int argc, char *argv[])
 		Event* cur_event = event_new_empty(&conf);
 		event_fill_from_text(cur_event, event_file, &conf);
 
-		printf("Parsing  : %s\n", cur_event->title);
+		if ((target != NULL) &&
+		    (strcmp(target, cur_event->title) == 0)) {
+			event_display(cur_event);
+			printf("***%s\n***\n", cur_event->misc);
+			return 0;
+		}
 		et_root = eventtree_insert(et_root, cur_event);
 		fclose(event_file);
 	}
