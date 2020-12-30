@@ -20,9 +20,15 @@ die(char *string) {
 int
 main(int argc, char *argv[])
 {
-	/* collect configuration from environment variables into a single
-	 * config struct
-	 */
+	char *name = NULL;
+	if (argc == 2)
+		name = argv[1];
+
+	if ((name != NULL) && (strcmp(name, "--help") == 0)) {
+		printf("Usage: %s [name]\n", argv[0]);
+		return 0;
+	}
+
 	Config conf;
 	conf.date_format     = getenv("DATE_FORMAT");
 	conf.time_format     = getenv("TIME_FORMAT");

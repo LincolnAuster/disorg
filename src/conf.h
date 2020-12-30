@@ -12,9 +12,9 @@ typedef struct {
 
 bool conf_enabled(const char *);
 
-int make_four_digits(int);
-bool is_alphanumeric(char);
-bool is_ascii_int(char);
-/* should probably go into event.h */
 unsigned int match_int(const char, const char *, const char *);
 int get_nth(int, const char, const char *);
+
+int  make_four_digits(int);
+bool is_alphanumeric(char);
+bool is_ascii_int(char);

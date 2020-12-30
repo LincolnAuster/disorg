@@ -26,6 +26,9 @@ key_value_read(char* line)
 	for (int i = 0; i < len; i++) {
 		c = line[i];
 
+		if (first_of_line && c != '!')
+			directive_value = true;
+
 		if (c == ' ' && directive_key) {
 			directive_key = false;
 			directive_value = true;
@@ -38,8 +41,11 @@ key_value_read(char* line)
 			buffer_append(&val, c, &val_size);
 
 		if (first_of_line && c == '!')
-			directive_key=true;
+			directive_key = true;
 	}
+
+	if (key[0] == '\0')
+		key = "MISC";
 
 	struct KeyValue *kv = malloc(sizeof(struct KeyValue));
 	kv->key = key;
@@ -51,6 +57,11 @@ key_value_read(char* line)
 void
 buffer_append(char **buffer, char c, size_t *capacity)
 {
+	if (*buffer == NULL) {
+		*buffer = malloc(sizeof(char));
+		*buffer[0] = '\0';
+	}
+
 	int text_len = strlen(*buffer);
 	if (text_len + 2 > *capacity) {
 		*capacity *= 2;
@@ -62,6 +73,21 @@ buffer_append(char **buffer, char c, size_t *capacity)
 	(*buffer)[text_len] = '\0';
 }
 
+/* append given string to the buffer, resize if necessary */
+void
+buffer_append_str(char **buffer, char *string, size_t *capacity)
+{
+	int text_len = strlen(*buffer);
+	if (text_len + strlen(string) > *capacity) {
+		*capacity += strlen(string);
+		char *new_buffer = realloc(*buffer, *capacity);
+		*buffer = new_buffer;
+	}
+
+	for (int i = 0; i < strlen(string); i++)
+		buffer_append(buffer, string[i], capacity);
+}
+
 Event*    
 event_new_empty(const Config *conf)
 {
@@ -71,28 +97,29 @@ event_new_empty(const Config *conf)
         int current_year = lt->tm_year;
  
         if (conf_enabled(conf->four_digit_year))
-		current_year += 1900;                                                                 
-        else                                                                                          
-		current_year -= 100;                                                                  
-                                                                                                      
-	Event *e = malloc(sizeof(Event));                                                             
-	e->title       = NULL;                                                                        
-	e->description = NULL;                                                                        
-	e->hour        = 0;                                                                           
-	e->minute      = 0;                                                                           
-	e->day         = 0;                                                                           
-	e->month       = 0;                                                                           
-	e->year        = current_year;                                                                
+		current_year += 1900;
+        else
+		current_year -= 100;
 
-	return e;    
+	Event *e = malloc(sizeof(Event));
+	e->title       = NULL;
+	e->description = NULL;
+	e->misc        = NULL;
+	e->hour        = 0;
+	e->minute      = 0;
+	e->day         = 0;
+	e->month       = 0;
+	e->year        = current_year;
+
+	return e;
 }
 
 /* loop through file line-by-line to fill fields of event */
 void
 event_fill_from_text(Event *e, FILE *f, const Config *c)
 {
-	char  *file_line    = NULL;
-	size_t file_bufsize = 0;
+	char   *file_line    = NULL;
+	size_t  file_bufsize = 0;
 	ssize_t len;
 	struct KeyValue *pair = NULL;
 	while ((len = getline(&file_line, &file_bufsize, f)) > 0) {
@@ -120,7 +147,7 @@ event_display(Event *e)
 	printf("/%02i", e->month);
 	printf("/%02i", e->year);
 	printf("\n");
-	
+
 	printf("\n");
 }
 
@@ -154,6 +181,14 @@ event_insert(Event* e, struct KeyValue *k, const Config *conf)
 
 		if (conf_enabled(conf->four_digit_year)) {
 			e->year = make_four_digits(e->year);
+		}
+	} else if (strcmp(k->key, "MISC") == 0) {
+		size_t capacity = strlen(k->val);
+		if (e->misc == NULL) {
+			e->misc = k->val;
+		} else {
+			size_t capacity = strlen(e->misc);
+			buffer_append_str(&(e->misc), k->val, &capacity);
 		}
 	}
 }

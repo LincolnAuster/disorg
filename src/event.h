@@ -5,6 +5,7 @@
 typedef struct {
 	char *title;
 	char *description;
+	char *misc;
 	unsigned int hour;
 	unsigned int minute;
 	unsigned int day;
@@ -13,7 +14,7 @@ typedef struct {
 } Event;
 
 typedef struct EventTree {
-	Event     *event;
+	Event *event;
 	struct EventTree *left;
 	struct EventTree *right;
 } EventTree;
@@ -26,6 +27,7 @@ struct KeyValue {
 
 struct KeyValue *key_value_read(char *);
 void buffer_append(char **, char, size_t *);
+void buffer_append_str(char **, char *, size_t *);
 
 Event *event_new_empty(const Config *);
 void   event_display(Event *);

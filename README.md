@@ -28,4 +28,6 @@ Configuration is done through a shell script at `~/.config/disorg/disorg`. For a
 A single binary parses event or wiki files as specified by the command line arguments given by the `disorg.sh` script.
 
 ## TODOs
-* ✨ make software good ✨
+0. ✨ make software good ✨
+1. gather misc details (lines without !) into Event
+2. print details if name (argv[1]) specified

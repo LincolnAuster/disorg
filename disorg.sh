@@ -14,4 +14,4 @@ export DATE_FORMAT
 export TIME_FORMAT
 export WEEK_START
 
-echo -e "$(find $BASE_DIRECTORY -name '*.ev')" | $(dirname $0)/disorg-main
+echo -e "$(find $BASE_DIRECTORY -name '*.ev')" | $(dirname $0)/disorg-main $@
