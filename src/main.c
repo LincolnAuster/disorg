@@ -8,7 +8,7 @@
 #include "event.h"
 
 static void die(char *string);
-void append_event(Event *, Event, size_t *);
+char *target_arg(int, char *[]);
 
 /* output given string to stderr and exit */
 static void
@@ -17,18 +17,24 @@ die(char *string) {
 	exit(1);
 }
 
+/* find a target event name in the args list */
+char *
+target_arg(int argc, char *argv[])
+{
+	if (argc > 1)
+		return argv[1];
+	else
+		return NULL;
+}
+
 int
 main(int argc, char *argv[])
 {
-	char *target = NULL;
-	if (argc == 2)
-		target = argv[1];
-
+	char *target = target_arg(argc, argv);
 	if ((target != NULL) && (strcmp(target, "--help") == 0)) {
 		printf("Usage: %s [name]\n", argv[0]);
 		return 0;
 	}
-
 
 	Config conf;
 	conf.date_format     = getenv("DATE_FORMAT");

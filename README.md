@@ -4,7 +4,9 @@
 ## Usage
 When called over a directory (by default ~/.disorg, or as specified in config), the binary will aggregate events and wiki pages. Events, marked by a .ev file extension, define a single time associated with a set of metadata (title, description, etc) as well as any free form text. Wiki files provide a searchable database of information, indexed by name.
 
-When no arguments are provided, the agenda is written to stdout, which displays a list of all events in ascending order of occurence (earliest first). If there are any other arguments, the first is interpreted as a name, and the corresponding event is displayed in its entirety.
+When no arguments are provided, the agenda (ordered list of events in the given directory) is written to stdout. If there are any other arguments, the first is interpreted as a name, and the corresponding event is displayed in its entirety. This is the overview displayed in the agenda followed by any unlabeled text in the .ev file.
+
+To add events or wiki pages, use a text editor. This program is only able to read events and exists purely to aggregate.
 
 ### Events
 .ev files have the following form:
