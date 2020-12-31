@@ -40,8 +40,10 @@ key_value_read(char* line)
 		else if (directive_value)
 			buffer_append(&val, c, &val_size);
 
-		if (first_of_line && c == '!')
+		if (first_of_line && c == '!') {
 			directive_key = true;
+			first_of_line = false;
+		}
 	}
 
 	if (key[0] == '\0')
@@ -155,10 +157,10 @@ event_insert(Event* e, struct KeyValue *k, const Config *conf)
 {
 	if (strcmp(k->key, "TITLE") == 0) {
 		e->title = (char *) malloc(strlen(k->val) * sizeof(char));
-		strncpy(e->title, k->val, strlen(k->val));
+		strcpy(e->title, k->val);
 	} else if (strcmp(k->key, "DESCRIPTION") == 0) {
 		e->description = (char *) malloc(strlen(k->val) * sizeof(char));
-		strncpy(e->description, k->val, strlen(k->val));
+		strcpy(e->description, k->val);
 	} else if (strcmp(k->key, "TIME") == 0) {
 		e->hour   = match_int('H', k->val, conf->time_format);
 		e->minute = match_int('M', k->val, conf->time_format);
@@ -194,6 +196,7 @@ event_insert_date(Event *e, const char *date, const Config *conf)
 void
 event_insert_misc(Event *e, char *text, const Config *conf)
 {
+	if (text[0] == '\0') return;
 	size_t capacity = sizeof(e->misc) / sizeof(char);
 	if (e->misc == NULL)
 		e->misc = text;
