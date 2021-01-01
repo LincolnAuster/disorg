@@ -1,5 +1,5 @@
 #define CLI_OUTPUT_LEN 80
-#define INITIAL_BUFFER_SIZE 4
+#define INITIAL_BUFFER_SIZE 8 /* this is just a random guess, i've tested nothing */
 
 /* opaque struct to contain data for a .ev */
 typedef struct {
@@ -26,8 +26,9 @@ struct KeyValue {
 };
 
 struct KeyValue *key_value_read(char *);
-void buffer_append(char **, char, size_t *);
-void buffer_append_str(char **, char *, size_t *);
+
+void buffer_append(char **, const char, size_t *);
+void buffer_append_str(char **, const char *, size_t *);
 
 Event *event_new_empty(const Config *);
 Event *event_free(Event *);

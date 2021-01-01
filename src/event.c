@@ -9,7 +9,7 @@
 
 /* scan a string for !KEY VALUE pairs, return KeyValue struct */
 struct KeyValue *
-key_value_read(char* line)
+key_value_read(char *line)
 {
 	size_t key_size, val_size;
 	char *key, *val;
@@ -17,8 +17,8 @@ key_value_read(char* line)
 	char c;
 
 	key_size = val_size = INITIAL_BUFFER_SIZE;
-	key = (char *) malloc(key_size * sizeof(char));
-	val = (char *) malloc(val_size * sizeof(char));
+	key = malloc(key_size * sizeof(char));
+	val = malloc(val_size * sizeof(char));
 	key[0] = val[0] = '\0';
 	first_of_line = true;
 	directive_key = directive_value = false;
@@ -26,30 +26,30 @@ key_value_read(char* line)
 	int len = strlen(line);
 	for (int i = 0; i < len; i++) {
 		c = line[i];
-
-		if (first_of_line && c != '!')
-			directive_value = true;
-
 		if (c == ' ' && directive_key) {
 			directive_key = false;
 			directive_value = true;
 			continue;
 		}
-
-		if (directive_key)
-			buffer_append(&key, c, &key_size);
-		else if (directive_value)
-			buffer_append(&val, c, &val_size);
-
 		if (first_of_line && c == '!') {
 			directive_key = true;
 			first_of_line = false;
+			continue;
 		}
+
+		if (first_of_line && c != '!')
+			directive_value = true;
+
+		if (directive_key)
+			buffer_append(&key, c, &key_size);
+		if (directive_value)
+			buffer_append(&val, c, &val_size);
 	}
 
 	if (key[0] == '\0') {
-		key = malloc(5 * sizeof(struct KeyValue));
-		strcpy(key, "MISC");
+		size_t capacity = sizeof(key) * sizeof(key[0]);
+		char *app = strdup("MISC");
+		buffer_append_str(&key, app, &capacity);
 	}
 
 	struct KeyValue *kv = malloc(sizeof(struct KeyValue));
@@ -60,7 +60,7 @@ key_value_read(char* line)
 
 /* append given character to the buffer, resize if necessary */
 void
-buffer_append(char **buffer, char c, size_t *capacity)
+buffer_append(char **buffer, const char c, size_t *capacity)
 {
 	if (*buffer == NULL) {
 		*buffer = malloc(sizeof(char));
@@ -80,10 +80,10 @@ buffer_append(char **buffer, char c, size_t *capacity)
 
 /* append given string to the buffer, resize if necessary */
 void
-buffer_append_str(char **buffer, char *string, size_t *capacity)
+buffer_append_str(char **buffer, const char *string, size_t *capacity)
 {
-	int text_len = strlen(*buffer);
-	if (text_len + strlen(string) > *capacity) {
+	int text_len = strlen(*buffer) + strlen(string);
+	if (text_len > *capacity) {
 		*capacity += strlen(string);
 		char *new_buffer = realloc(*buffer, *capacity);
 		*buffer = new_buffer;
