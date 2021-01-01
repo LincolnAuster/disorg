@@ -11,16 +11,17 @@
 struct KeyValue *
 key_value_read(char* line)
 {
-	char c;
+	size_t key_size, val_size;
+	char *key, *val;
 	bool first_of_line, directive_key, directive_value;
+	char c;
+
+	key_size = val_size = INITIAL_BUFFER_SIZE;
+	key = (char *) malloc(key_size * sizeof(char));
+	val = (char *) malloc(val_size * sizeof(char));
+	key[0] = val[0] = '\0';
 	first_of_line = true;
 	directive_key = directive_value = false;
-
-	size_t key_size, val_size;
-	key_size = val_size = INITIAL_BUFFER_SIZE;
-	char *key = (char *) malloc(key_size * sizeof(char));
-	char *val = (char *) malloc(val_size * sizeof(char));
-	key[0] = val[0] = '\0';
 
 	int len = strlen(line);
 	for (int i = 0; i < len; i++) {
@@ -46,8 +47,10 @@ key_value_read(char* line)
 		}
 	}
 
-	if (key[0] == '\0')
-		key = "MISC";
+	if (key[0] == '\0') {
+		key = malloc(5 * sizeof(struct KeyValue));
+		strcpy(key, "MISC");
+	}
 
 	struct KeyValue *kv = malloc(sizeof(struct KeyValue));
 	kv->key = key;
@@ -128,7 +131,10 @@ event_fill_from_text(Event *e, FILE *f, const Config *c)
 		file_line[--len] = '\0'; /* strip newline */
 		pair = key_value_read(file_line);
 		event_insert(e, pair, c);
+		free(pair->val);
+		free(pair->key);
 	}
+	free(pair);
 }
 
 /* write the event to stdout with some pretty formatting ✨ */
@@ -156,10 +162,10 @@ void
 event_insert(Event* e, struct KeyValue *k, const Config *conf)
 {
 	if (strcmp(k->key, "TITLE") == 0) {
-		e->title = (char *) malloc(strlen(k->val) * sizeof(char));
+		e->title = malloc(strlen(k->val) * sizeof(char));
 		strcpy(e->title, k->val);
 	} else if (strcmp(k->key, "DESCRIPTION") == 0) {
-		e->description = (char *) malloc(strlen(k->val) * sizeof(char));
+		e->description = malloc(strlen(k->val) * sizeof(char));
 		strcpy(e->description, k->val);
 	} else if (strcmp(k->key, "TIME") == 0) {
 		e->hour   = match_int('H', k->val, conf->time_format);
