@@ -14,7 +14,7 @@ typedef struct {
 } Event;
 
 typedef struct EventTree {
-	Event *event;
+	Event            *event;
 	struct EventTree *left;
 	struct EventTree *right;
 } EventTree;

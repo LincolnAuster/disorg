@@ -50,6 +50,7 @@ key_value_read(char *line)
 		size_t capacity = sizeof(key) * sizeof(key[0]);
 		char *app = strdup("MISC");
 		buffer_append_str(&key, app, &capacity);
+		free(app);
 	}
 
 	struct KeyValue *kv = malloc(sizeof(struct KeyValue));
@@ -70,11 +71,14 @@ buffer_append(char **buffer, const char c, size_t *capacity)
 	int text_len = strlen(*buffer);
 	if (text_len + 2 > *capacity) {
 		*capacity *= 2;
-		char *new_buffer = realloc(*buffer, *capacity);
+		char *new_buffer = malloc(*capacity * sizeof(char));
 		if (new_buffer == NULL) {
-			free(buffer);
+			free(*buffer);
+			*buffer = NULL;
 			return;
-		}	
+		}
+		strcpy(new_buffer, *buffer);
+		free(*buffer);
 		*buffer = new_buffer;
 	}
 
@@ -126,9 +130,10 @@ event_new_empty(const Config *conf)
 Event
 *event_free(Event *e)
 {
-	free(e->title);
-	free(e->description);
-	free(e->misc);
+	if (e == NULL) return NULL;
+	if (e->title != NULL)       free(e->title);
+	if (e->description != NULL) free(e->description);
+	if (e->misc != NULL)        free(e->misc);
 	free(e);
 	return NULL;
 }
@@ -289,9 +294,9 @@ eventtree_insert(EventTree *et, Event *e)
 	return et;
 }
 
-/* recursizely free a tree given root */
-void
-*eventtree_free(EventTree *et)
+/* recursively free a tree given root */
+void *
+eventtree_free(EventTree *et)
 {
 	if (et == NULL) return NULL;
 	et->left  = eventtree_free(et->left);

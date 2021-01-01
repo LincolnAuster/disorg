@@ -51,8 +51,6 @@ main(int argc, char *argv[])
 	bufsize = 0;
 
 	EventTree *et_root = NULL;
-	int i = 0;
-
 	while ((len = getline(&stdin_line, &bufsize, stdin)) > 0) {
 		stdin_line[--len] = '\0'; /* strip newline from path */
 
@@ -65,14 +63,18 @@ main(int argc, char *argv[])
 		if ((target != NULL) &&
 		    (strcmp(target, cur_event->title) == 0)) {
 			event_display(cur_event);
-			printf("***%s\n***\n", cur_event->misc);
+			printf("***\n%s***\n", cur_event->misc);
+			et_root = eventtree_free(et_root);
+			free(cur_event);
+			free(stdin_line);
 			return 0;
 		}
 		et_root = eventtree_insert(et_root, cur_event);
 		fclose(event_file);
 	}
+	free(stdin_line);
 
 	eventtree_in_order(et_root, &event_display);
-	eventtree_free(et_root);
+	et_root = eventtree_free(et_root);
 	return 0;
 }

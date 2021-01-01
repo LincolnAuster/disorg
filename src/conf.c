@@ -29,8 +29,8 @@ unsigned int
 match_int(char location_char, const char *string, const char *format_string)
 {
 	bool increment = true;
-	int location = 0;
-	char delim   = '\0';
+	int location   = 0;
+	char delim     = '\0';
 	int len = strlen(format_string);
 	for (int i = 0; i < len; i++) {
 		if (!is_alphanumeric(format_string[i])) {
@@ -48,14 +48,13 @@ match_int(char location_char, const char *string, const char *format_string)
 	return get_nth(location, delim, string);
 }
 
-int get_nth(int location, const char delim, const char *string)
+int
+get_nth(int location, const char delim, const char *string)
 {
-	int len = strlen(string);
-	char *modifiable_copy = malloc(++len * sizeof(char));
-	strcpy(modifiable_copy, string);
-
-	char *result = { '\0' };
+	char *modifiable_copy = strdup(string);
+	char *result = NULL;
 	const char delim_str[2] = {delim, '\0'};
+
 	for (int i = 0; i < location + 1; i++) {
 		result = strsep(&modifiable_copy, delim_str);
 		if (result == NULL) {
@@ -63,8 +62,11 @@ int get_nth(int location, const char delim, const char *string)
 			return 0;
 		}
 	}
+
+	int ans = atoi(result);
 	free(modifiable_copy);
-	return atoi(result);
+	free(result);
+	return ans;
 }
 
 /* returns true if c is either strictly a number 0-9 or a letter
