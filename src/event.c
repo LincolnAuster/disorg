@@ -71,6 +71,10 @@ buffer_append(char **buffer, const char c, size_t *capacity)
 	if (text_len + 2 > *capacity) {
 		*capacity *= 2;
 		char *new_buffer = realloc(*buffer, *capacity);
+		if (new_buffer == NULL) {
+			free(buffer);
+			return;
+		}	
 		*buffer = new_buffer;
 	}
 
@@ -136,15 +140,16 @@ event_fill_from_text(Event *e, FILE *f, const Config *c)
 	char   *file_line    = NULL;
 	size_t  file_bufsize = 0;
 	ssize_t len;
-	struct KeyValue *pair = NULL;
 	while ((len = getline(&file_line, &file_bufsize, f)) > 0) {
+		struct KeyValue *pair = NULL;
 		file_line[--len] = '\0'; /* strip newline */
 		pair = key_value_read(file_line);
 		event_insert(e, pair, c);
 		free(pair->val);
 		free(pair->key);
+		free(pair);
 	}
-	free(pair);
+	free(file_line);
 }
 
 /* write the event to stdout with some pretty formatting ✨ */
@@ -172,10 +177,10 @@ void
 event_insert(Event* e, struct KeyValue *k, const Config *conf)
 {
 	if (strcmp(k->key, "TITLE") == 0) {
-		e->title = malloc(strlen(k->val) * sizeof(char));
+		e->title = malloc((strlen(k->val) + 1) * sizeof(char));
 		strcpy(e->title, k->val);
 	} else if (strcmp(k->key, "DESCRIPTION") == 0) {
-		e->description = malloc(strlen(k->val) * sizeof(char));
+		e->description = malloc((strlen(k->val) + 1) * sizeof(char));
 		strcpy(e->description, k->val);
 	} else if (strcmp(k->key, "TIME") == 0) {
 		e->hour   = match_int('H', k->val, conf->time_format);

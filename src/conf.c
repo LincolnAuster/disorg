@@ -58,9 +58,12 @@ int get_nth(int location, const char delim, const char *string)
 	const char delim_str[2] = {delim, '\0'};
 	for (int i = 0; i < location + 1; i++) {
 		result = strsep(&modifiable_copy, delim_str);
-		if (result == NULL) return 0;
+		if (result == NULL) {
+			free(modifiable_copy);
+			return 0;
+		}
 	}
-
+	free(modifiable_copy);
 	return atoi(result);
 }
 
