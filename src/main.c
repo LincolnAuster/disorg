@@ -73,6 +73,6 @@ main(int argc, char *argv[])
 	}
 
 	eventtree_in_order(et_root, &event_display);
-
+	eventtree_free(et_root);
 	return 0;
 }

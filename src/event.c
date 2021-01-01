@@ -158,7 +158,7 @@ event_display(Event *e)
 }
 
 /* parse a KeyValue into Event fields */                  
-void                                                                         
+void
 event_insert(Event* e, struct KeyValue *k, const Config *conf)
 {
 	if (strcmp(k->key, "TITLE") == 0) {
@@ -272,6 +272,17 @@ eventtree_insert(EventTree *et, Event *e)
 		et->right = eventtree_insert(et->right, e);
 
 	return et;
+}
+
+/* recursizely free a tree given root */
+void
+*eventtree_free(EventTree *et)
+{
+	if (et == NULL) return NULL;
+	et->left  = eventtree_free(et->left);
+	et->right = eventtree_free(et->right);
+	free(et);
+	return NULL;
 }
 
 /* perform an in-order traversal of the provided tree and

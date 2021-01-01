@@ -40,5 +40,6 @@ int event_compare(Event *, Event *);
 
 EventTree *eventtree_new();
 EventTree *eventtree_insert(EventTree *, Event *);
+void      *eventtree_free(EventTree *);
 EventTree *eventtree_new_from_event(Event *); 
 void       eventtree_in_order(EventTree *, void (*)(Event *));
