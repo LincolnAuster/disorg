@@ -119,6 +119,16 @@ event_new_empty(const Config *conf)
 	return e;
 }
 
+Event
+*event_free(Event *e)
+{
+	free(e->title);
+	free(e->description);
+	free(e->misc);
+	free(e);
+	return NULL;
+}
+
 /* loop through file line-by-line to fill fields of event */
 void
 event_fill_from_text(Event *e, FILE *f, const Config *c)
@@ -281,6 +291,7 @@ void
 	if (et == NULL) return NULL;
 	et->left  = eventtree_free(et->left);
 	et->right = eventtree_free(et->right);
+	et->event = event_free(et->event);
 	free(et);
 	return NULL;
 }

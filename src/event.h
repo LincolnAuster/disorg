@@ -30,6 +30,7 @@ void buffer_append(char **, char, size_t *);
 void buffer_append_str(char **, char *, size_t *);
 
 Event *event_new_empty(const Config *);
+Event *event_free(Event *);
 void   event_display(Event *);
 void   event_insert(Event *, struct KeyValue *, const Config *);
 void   event_insert_date(Event *, const char *, const Config *);
