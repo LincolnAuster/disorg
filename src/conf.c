@@ -28,17 +28,23 @@ make_four_digits(int n)
 unsigned int
 match_int(char location_char, const char *string, const char *format_string)
 {
-	bool increment = true;
-	int location   = 0;
-	char delim     = '\0';
-	int len = strlen(format_string);
+	int location, len;
+	char delim, c;
+	bool increment;
+
+	location  = 0;
+	len       = strlen(format_string);
+	delim     = '\0';
+	increment = true;
+
 	for (int i = 0; i < len; i++) {
+		c = format_string[i];
 		if (!is_alphanumeric(format_string[i])) {
-			delim = format_string[i];
+			delim = c;
 			if (increment) location++;
 		}
 
-		if (location_char == format_string[i])
+		if (location_char == c)
 			increment = false;
 	}
         
