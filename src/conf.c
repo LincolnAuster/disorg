@@ -57,21 +57,29 @@ match_int(char location_char, const char *string, const char *format_string)
 int
 get_nth(int location, const char delim, const char *string)
 {
-	char *modifiable_copy = strdup(string);
-	char *result = NULL;
-	const char delim_str[2] = {delim, '\0'};
+	char *copy, *copy_a, *result, *delim_str;
+
+	result = NULL;
+	delim_str = malloc(2 * sizeof(char));
+	delim_str[0] = delim;
+	delim_str[1] = '\0';
+
+	copy_a = strdup(string);
+	copy   = copy_a;
 
 	for (int i = 0; i < location + 1; i++) {
-		result = strsep(&modifiable_copy, delim_str);
+		result = strsep(&copy, delim_str);
 		if (result == NULL) {
-			free(modifiable_copy);
+			free(copy_a);
+			free(delim_str);
 			return 0;
 		}
 	}
 
 	int ans = atoi(result);
-	free(modifiable_copy);
+	free(copy_a);
 	free(result);
+	free(delim_str);
 	return ans;
 }
 
