@@ -11,3 +11,4 @@ export DATE_FORMAT
 export TIME_FORMAT
 
 echo -e "$(find $BASE_DIRECTORY -name '*.ev')" | valgrind --leak-check=full $(dirname $0)/disorg-main "$@"
+# echo -e "$(find $BASE_DIRECTORY -name '*.ev')" | $(dirname $0)/disorg-main "$@"

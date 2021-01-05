@@ -222,14 +222,19 @@ event_insert_date(Event *e, const char *date, const Config *conf)
 void
 event_insert_misc(Event *e, char *text, const Config *conf)
 {
+	size_t capacity;
+	char **addr;
+
+	capacity = sizeof(e->misc) / sizeof(char);
+	addr = &(e->misc);
+
 	if (text[0] == '\0') return;
-	size_t capacity = sizeof(e->misc) / sizeof(char);
 	if (e->misc == NULL)
 		e->misc = text;
 	else
-		buffer_append_str(&(e->misc), text, &capacity);
+		buffer_append_str(addr, text, &capacity);
 
-	buffer_append(&(e->misc), '\n', &capacity);
+	buffer_append(addr, '\n', &capacity);
 
 }
 
