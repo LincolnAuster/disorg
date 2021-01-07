@@ -32,7 +32,8 @@ void buffer_append_str(char **, const char *, size_t *);
 
 Event *event_new_empty(const Config *);
 Event *event_free(Event *);
-void   event_display(Event *);
+void   event_disp(Event *);
+void   event_vdisp(Event *);
 void   event_insert(Event *, struct KeyValue *, const Config *);
 void   event_insert_date(Event *, const char *, const Config *);
 void   event_insert_misc(Event *, char *, const Config *);

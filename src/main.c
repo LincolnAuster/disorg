@@ -62,8 +62,7 @@ main(int argc, char *argv[])
 
 		if ((target != NULL) &&
 		    (strcmp(target, cur_event->title) == 0)) {
-			event_display(cur_event);
-			printf("***\n%s***\n", cur_event->misc);
+			event_vdisp(cur_event);
 			et_root = eventtree_free(et_root);
 			free(cur_event);
 			free(stdin_line);
@@ -74,7 +73,7 @@ main(int argc, char *argv[])
 	}
 	free(stdin_line);
 
-	eventtree_in_order(et_root, &event_display);
+	eventtree_in_order(et_root, &event_disp);
 	et_root = eventtree_free(et_root);
 	return 0;
 }

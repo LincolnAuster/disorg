@@ -157,7 +157,7 @@ event_fill_from_text(Event *e, FILE *f, const Config *c)
 
 /* write the event to stdout with some pretty formatting ✨ */
 void
-event_display(Event *e)
+event_disp(Event *e)
 {
 	for (int i = 0; i < CLI_OUTPUT_LEN; i++) printf("-");
 	printf("\n");
@@ -166,13 +166,19 @@ event_display(Event *e)
 	printf("%-*sDESCRIPTION\n", CLI_OUTPUT_LEN - 11, e->description);
 	
 	printf("%02i", e->hour);
-	printf(":%02i", e->minute);
-	printf("\n");
+	printf(":%02i\n", e->minute);
 	
 	printf("%02i", e->day);
 	printf("/%02i", e->month);
-	printf("/%02i", e->year);
-	printf("\n\n");
+	printf("/%02i\n", e->year);
+}
+
+/* verbose display, display with miscellaneous field */
+void
+event_vdisp(Event *e) {
+	event_disp(e);
+	if (e->misc == NULL) return;
+	printf("%s", e->misc);
 }
 
 /* parse a KeyValue into Event fields */                  
