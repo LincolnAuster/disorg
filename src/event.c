@@ -71,15 +71,13 @@ buffer_append(char **buffer, const char c, size_t *capacity)
 	int text_len = strlen(*buffer);
 	if (text_len + 2 > *capacity) {
 		*capacity *= 2;
-		char *new_buffer = malloc(*capacity * sizeof(char));
-		if (new_buffer == NULL) {
+		char *nb = realloc(*buffer, *capacity * sizeof(char));
+		if (nb == NULL) {
 			free(*buffer);
 			*buffer = NULL;
 			return;
 		}
-		strcpy(new_buffer, *buffer);
-		free(*buffer);
-		*buffer = new_buffer;
+		*buffer = nb;
 	}
 
 	(*buffer)[text_len++] = c;
@@ -219,6 +217,7 @@ event_insert_date(Event *e, const char *date, const Config *conf)
 	}
 }
 
+/* insert text into e->misc : FIXME segfaults somewhere around here, go thorugh with debugger */
 void
 event_insert_misc(Event *e, char *text, const Config *conf)
 {
@@ -226,16 +225,19 @@ event_insert_misc(Event *e, char *text, const Config *conf)
 	char **addr;
 
 	capacity = sizeof(e->misc) / sizeof(char);
-	addr = &(e->misc);
+	addr     = &(e->misc);
 
 	if (text[0] == '\0') return;
-	if (e->misc == NULL)
-		e->misc = text;
-	else
+	if (e->misc == NULL) {
+		e->misc = malloc((strlen(text) + 2) * sizeof(char));
+		strcpy(e->misc, text);
+		capacity += 2;
+	} else {
 		buffer_append_str(addr, text, &capacity);
+	}
 
+	capacity = sizeof(e->misc) / sizeof(char);
 	buffer_append(addr, '\n', &capacity);
-
 }
 
 /* returns 0 if equal, below if a < b and 1 if b > a */
