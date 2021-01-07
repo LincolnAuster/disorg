@@ -330,3 +330,19 @@ eventtree_in_order(EventTree *et, void (*fun)(Event *))
 	fun(et->event);
 	eventtree_in_order(et->left, fun);
 }
+
+void
+/* Traverse the tree, call specified function if title matches provided
+ * target.
+ */
+eventtree_if(EventTree *et, char *t_tgt, void (*fun)(Event *))
+{
+	if (et == NULL) return;
+	if (strcmp(et->event->title, t_tgt) == 0) {
+		fun(et->event);
+		return;
+	}
+
+	eventtree_if(et->left, t_tgt, fun);
+	eventtree_if(et->right, t_tgt, fun);
+}

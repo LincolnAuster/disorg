@@ -46,3 +46,4 @@ EventTree *eventtree_insert(EventTree *, Event *);
 void      *eventtree_free(EventTree *);
 EventTree *eventtree_new_from_event(Event *); 
 void       eventtree_in_order(EventTree *, void (*)(Event *));
+void       eventtree_if(EventTree *, char *, void (*)(Event *));

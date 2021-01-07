@@ -28,6 +28,7 @@ Configuration is done through a shell script, located at `~/.config/disorg/disor
 
 Current config options are:
 ```bash
+DEBUG="FALSE"
 BASE_DIRECTORY="$HOME/.disorg"
 DATE_FORMAT="D-M-Y"
 TIME_FORMAT="H:M"
