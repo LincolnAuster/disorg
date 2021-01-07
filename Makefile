@@ -1,5 +1,5 @@
 all:
-	gcc -g src/main.c src/conf.c src/event.c -o disorg-main -pedantic
+	gcc src/main.c src/conf.c src/event.c -o disorg-main -pedantic -g
 release:
 	gcc src/main.c src/event.c src/conf.c -o disorg-main
 install: release

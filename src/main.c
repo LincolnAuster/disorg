@@ -8,7 +8,7 @@
 #include "event.h"
 
 static void die(char *string);
-char *target_arg(int, char *[]);
+char *target_arg(int, char **);
 
 /* output given string to stderr and exit */
 static void
@@ -17,23 +17,32 @@ die(char *string) {
 	exit(1);
 }
 
-/* find a target event name in the args list */
+/* find a target event name in the args list, NULL if none */
 char *
-target_arg(int argc, char *argv[])
+target_arg(int argc, char **argv)
 {
-	if (argc > 1)
-		return argv[1];
-	else
-		return NULL;
+	if (argc < 2) return NULL;
+
+	char *target;
+	for (int i = 1; i <= argc; i++) {
+		if (argv[i][0] != '-') {
+			target = malloc(strlen(argv[i] + 1));
+			strcpy(target, argv[i]);
+			return target;
+		}
+	}
+
+	return NULL;
 }
 
 int
-main(int argc, char *argv[])
+main(int argc, char **argv)
 {
 	char *target = target_arg(argc, argv);
+
 	if ((target != NULL) && (strcmp(target, "--help") == 0)) {
-		printf("Usage: %s [name]\n", argv[0]);
-		return 0;
+	 	printf("Usage: %s [name]\n", argv[0]);
+	 	return 0;
 	}
 
 	Config conf;
