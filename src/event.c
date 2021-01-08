@@ -7,7 +7,9 @@
 #include "conf.h"
 #include "event.h"
 
-/* scan a string for !KEY VALUE pairs, return KeyValue struct */
+/* scan a string for !KEY VALUE pairs, return KeyValue struct 
+ * TODO this really must be shorter
+ */
 struct KeyValue *
 key_value_read(char *line)
 {
@@ -223,7 +225,7 @@ event_insert_date(Event *e, const char *date, const Config *conf)
 	}
 }
 
-/* insert text into e->misc : FIXME segfaults somewhere around here, go thorugh with debugger */
+/* insert text into e->misc - set if empty, modify &(e->misc) otherwise */
 void
 event_insert_misc(Event *e, char *text, const Config *conf)
 {

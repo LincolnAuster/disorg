@@ -7,16 +7,8 @@
 #include "conf.h"
 #include "event.h"
 
-static void die(char *string);
 char *target_arg(int, char **);
 EventTree *build_tree(EventTree *, Config *conf, FILE *);
-
-/* output given string to stderr and exit */
-static void
-die(char *string) {
-	fprintf(stderr, "%s", string);
-	exit(1);
-}
 
 /* find a target event name in the args list, NULL if none */
 char *
