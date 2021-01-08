@@ -18,10 +18,13 @@ key_value_read(char *line)
 	bool first_of_line, directive_key, directive_value;
 	char c;
 
-	key_size = val_size = INITIAL_BUFFER_SIZE;
-	key = malloc(key_size * sizeof(char));
+	val_size = INITIAL_BUFFER_SIZE;
+	key_size = 5;
+
+	key = strdup("MISC");
 	val = malloc(val_size * sizeof(char));
-	key[0] = val[0] = '\0';
+	val[0] = '\0';
+
 	first_of_line = true;
 	directive_key = directive_value = false;
 
@@ -34,6 +37,7 @@ key_value_read(char *line)
 			continue;
 		}
 		if (first_of_line && c == '!') {
+			key[0] = '\0';
 			directive_key = true;
 			first_of_line = false;
 			continue;
@@ -46,13 +50,6 @@ key_value_read(char *line)
 			buffer_append(&key, c, &key_size);
 		if (directive_value)
 			buffer_append(&val, c, &val_size);
-	}
-
-	if (key[0] == '\0') {
-		size_t capacity = sizeof(key) * sizeof(key[0]);
-		char *app = strdup("MISC");
-		buffer_append_str(&key, app, &capacity);
-		free(app);
 	}
 
 	struct KeyValue *kv = malloc(sizeof(struct KeyValue));
