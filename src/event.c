@@ -7,52 +7,30 @@
 #include "conf.h"
 #include "event.h"
 
-/* scan a string for !KEY VALUE pairs, return KeyValue struct 
- * TODO this really must be shorter
- */
+/* scan a string for !KEY VALUE pairs, return KeyValue struct */
 struct KeyValue *
-key_value_read(char *line)
+key_value_read(const char *line)
 {
-	size_t key_size, val_size;
+	struct KeyValue *kv;
 	char *key, *val;
-	bool first_of_line, directive_key, directive_value;
-	char c;
+	ssize_t key_len, val_len;
 
-	val_size = INITIAL_BUFFER_SIZE;
-	key_size = 5;
+	if (line[0] == '\0') return NULL;
 
-	key = strdup("MISC");
-	val = malloc(val_size * sizeof(char));
-	val[0] = '\0';
-
-	first_of_line = true;
-	directive_key = directive_value = false;
-
-	int len = strlen(line);
-	for (int i = 0; i < len; i++) {
-		c = line[i];
-		if (c == ' ' && directive_key) {
-			directive_key = false;
-			directive_value = true;
-			continue;
-		}
-		if (first_of_line && c == '!') {
-			key[0] = '\0';
-			directive_key = true;
-			first_of_line = false;
-			continue;
-		}
-
-		if (first_of_line && c != '!')
-			directive_value = true;
-
-		if (directive_key)
-			buffer_append(&key, c, &key_size);
-		if (directive_value)
-			buffer_append(&val, c, &val_size);
+	if (line[0] == '!') {
+		key = malloc(sizeof(line));
+		sscanf(line, "!%s ", key);
+		key_len = strlen(key) + 1;
+		val_len = strlen(line) - strlen(key);
+		val = malloc(val_len);
+		/* + 1 offsets the space trailing the !KEY */
+		strcpy(val, line + key_len + 1);
+	} else {
+		key = strdup("MISC");
+		val = strdup(line);
 	}
 
-	struct KeyValue *kv = malloc(sizeof(struct KeyValue));
+	kv = malloc(sizeof(struct KeyValue));
 	kv->key = key;
 	kv->val = val;
 	return kv;
@@ -139,13 +117,16 @@ Event
 void
 event_fill_from_text(Event *e, FILE *f, const Config *c)
 {
+	struct KeyValue *pair;
 	char   *file_line    = NULL;
 	size_t  file_bufsize = 0;
 	ssize_t len;
+
 	while ((len = getline(&file_line, &file_bufsize, f)) > 0) {
-		struct KeyValue *pair = NULL;
 		file_line[--len] = '\0'; /* strip newline */
 		pair = key_value_read(file_line);
+		if (pair == NULL) continue;
+
 		event_insert(e, pair, c);
 		free(pair->val);
 		free(pair->key);

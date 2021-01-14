@@ -25,7 +25,7 @@ struct KeyValue {
 	char *val;
 };
 
-struct KeyValue *key_value_read(char *);
+struct KeyValue *key_value_read(const char *);
 
 void buffer_append(char **, const char, size_t *);
 void buffer_append_str(char **, const char *, size_t *);
