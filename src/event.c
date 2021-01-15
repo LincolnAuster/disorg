@@ -15,8 +15,6 @@ key_value_read(const char *line)
 	char *key, *val;
 	ssize_t key_len, val_len;
 
-	if (line[0] == '\0') return NULL;
-
 	if (line[0] == '!') {
 		key = malloc(sizeof(line));
 		sscanf(line, "!%s ", key);
@@ -124,9 +122,9 @@ event_fill_from_text(Event *e, FILE *f, const Config *c)
 
 	while ((len = getline(&file_line, &file_bufsize, f)) > 0) {
 		file_line[--len] = '\0'; /* strip newline */
-		pair = key_value_read(file_line);
-		if (pair == NULL) continue;
+		if (len < 2) continue;   /* ignore empty lines */
 
+		pair = key_value_read(file_line);
 		event_insert(e, pair, c);
 		free(pair->val);
 		free(pair->key);
