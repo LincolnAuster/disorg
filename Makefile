@@ -1,7 +1,8 @@
 all:
-	gcc src/main.c src/conf.c src/event.c -o disorg-main -pedantic -g
+	gcc src/main.c src/conf.c src/event.c src/global.c \
+		-o disorg-main -pedantic -g
 release:
-	gcc src/main.c src/event.c src/conf.c -o disorg-main
+	gcc src/main.c src/event.c src/conf.c src/global.c -o disorg-main
 install: release
 	cp disorg-main disorg.sh /usr/local/bin/
 uninstall:

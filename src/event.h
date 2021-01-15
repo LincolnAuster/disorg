@@ -1,5 +1,6 @@
 #define CLI_OUTPUT_LEN 80
-#define INITIAL_BUFFER_SIZE 8 /* this is just a random guess, i've tested nothing */
+#define INITIAL_BUFFER_SIZE 12
+/* INITIAL_BUFFER_SIZE is just a random guess, i've tested nothing */
 
 /* opaque struct to contain data for a .ev */
 typedef struct {
@@ -18,14 +19,6 @@ typedef struct EventTree {
 	struct EventTree *left;
 	struct EventTree *right;
 } EventTree;
-
-/* Stores a key value pair that can be returned from a parsing function. */
-struct KeyValue {
-	char *key;
-	char *val;
-};
-
-struct KeyValue *key_value_read(const char *);
 
 void buffer_append(char **, const char, size_t *);
 void buffer_append_str(char **, const char *, size_t *);
