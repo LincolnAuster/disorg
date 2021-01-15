@@ -7,25 +7,38 @@
 #include "conf.h"
 #include "event.h"
 
-char *target_arg(int, char **);
+#define USAGE "Usage: %s [w] [target] [--help]\n"                          \
+              "  w      - query wiki pages instead of agenda\n"            \
+	      "  target - show detailed view of file with !TTILE target\n" \
+	      "  --help - show this help message\n"                        \
+	      , argv[0]
+
+struct cargs {
+	char *target;
+	bool wiki;
+	bool help;
+};
+
+struct cargs *read_args(int, char **);
 EventTree *build_tree(EventTree *, Config *conf, FILE *);
 
-/* find a target event name in the args list, NULL if none */
-char *
-target_arg(int argc, char **argv)
-{
-	if (argc < 2) return NULL;
+struct cargs *
+read_args(int argc, char **argv) {
+	struct cargs *c = malloc(sizeof(struct cargs));
+	c->target = NULL;
+	c->wiki = false;
+	c->help = false;
 
-	char *target;
-	for (int i = 1; i <= argc; i++) {
-		if (argv[i][0] != '-') {
-			target = malloc(strlen(argv[i] + 1));
-			strcpy(target, argv[i]);
-			return target;
-		}
+	for (int i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "w") == 0)
+			c->wiki = true;
+		else if (strcmp(argv[i], "--help") == 0) {
+			c->help = true;
+		} else
+			c->target = strdup(argv[i]);
 	}
 
-	return NULL;
+	return c;
 }
 
 /* build an EventTree from paths in a specified file. */
@@ -57,7 +70,7 @@ build_tree(EventTree *et_root, Config *conf, FILE *from) {
 int
 main(int argc, char **argv)
 {
-	char *target;
+	struct cargs *args;
 	EventTree *et_root;
 	Config conf;
 
@@ -66,22 +79,24 @@ main(int argc, char **argv)
 	conf.week_start      = getenv("WEEK_START");
 	conf.four_digit_year = getenv("FOUR_DIGIT_YEAR");
 
-	target = target_arg(argc, argv);
+	args = read_args(argc, argv);
 
-	if ((target != NULL) && (strcmp(target, "--help") == 0)) {
-	 	printf("Usage: %s [name]\n", argv[0]);
+	if (args->help) {
+		printf(USAGE);
+//	 	printf("Usage: %s [name]\n", argv[0]);
 	 	return 0;
 	}
 
 	et_root = NULL;
 	et_root = build_tree(et_root, &conf, stdin);
 
-	if (target != NULL)
-		eventtree_if(et_root, target, &event_vdisp);
+	if (args->target != NULL)
+		eventtree_if(et_root, args->target, &event_vdisp);
 	else
 		eventtree_in_order(et_root, &event_disp);
 
-	free(target);
+	free(args->target);
+	free(args);
 	et_root = eventtree_free(et_root);
 	return 0;
 }
