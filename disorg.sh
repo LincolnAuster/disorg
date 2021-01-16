@@ -12,7 +12,9 @@ export DATE_FORMAT
 export TIME_FORMAT
 
 if [[ "$DEBUG" == "TRUE" ]]; then
-	echo -e "$(find $BASE_DIRECTORY -name '*.ev')" | valgrind --leak-check=full $(dirname $0)/disorg-main "$@"
+	echo -e "$(find $BASE_DIRECTORY -type f)" |
+		valgrind --leak-check=full $(dirname $0)/disorg-main "$@"
 else
-	echo -e "$(find $BASE_DIRECTORY -name '*.ev')" | $(dirname $0)/disorg-main "$@"
+	echo -e "$(find $BASE_DIRECTORY -type f)" |
+		$(dirname $0)/disorg-main "$@"
 fi

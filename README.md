@@ -40,4 +40,5 @@ By default: dates are separated by dashes and in day-month-year format. Times ar
 A single binary parses event or wiki files as specified by the command line arguments given by the `disorg.sh` script.
 
 ## TODOs
-✨ make software good ✨
+* ✨ make software good ✨
+* tags for wikis and events

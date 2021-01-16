@@ -10,3 +10,6 @@ typedef struct {
 } WikiTable;
 
 Wiki *wiki_new_empty();
+Wiki *wiki_free(Wiki *);
+void  wiki_disp(const Wiki *);
+void  wiki_vdisp(const Wiki *);
