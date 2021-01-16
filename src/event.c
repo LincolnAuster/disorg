@@ -8,46 +8,7 @@
 #include "conf.h"
 #include "event.h"
 
-/* append given character to the buffer, resize if necessary */
-void
-buffer_append(char **buffer, const char c, size_t *capacity)
-{
-	if (*buffer == NULL) {
-		*buffer = malloc(sizeof(char));
-		*buffer[0] = '\0';
-	}
-
-	int text_len = strlen(*buffer);
-	if (text_len + 2 > *capacity) {
-		*capacity *= 2;
-		char *nb = realloc(*buffer, *capacity * sizeof(char));
-		if (nb == NULL) {
-			free(*buffer);
-			*buffer = NULL;
-			return;
-		}
-		*buffer = nb;
-	}
-
-	(*buffer)[text_len++] = c;
-	(*buffer)[text_len] = '\0';
-}
-
-/* append given string to the buffer, resize if necessary */
-void
-buffer_append_str(char **buffer, const char *string, size_t *capacity)
-{
-	int text_len = strlen(*buffer) + strlen(string);
-	if (text_len > *capacity) {
-		*capacity += strlen(string);
-		char *new_buffer = realloc(*buffer, *capacity);
-		*buffer = new_buffer;
-	}
-
-	for (int i = 0; i < strlen(string); i++)
-		buffer_append(buffer, string[i], capacity);
-}
-
+/* initialize a new empty Event on 0/0/current year 0:0:0 */
 Event*    
 event_new_empty(const Config *conf)
 {
@@ -74,6 +35,7 @@ event_new_empty(const Config *conf)
 	return e;
 }
 
+/* murder event :) */
 Event
 *event_free(Event *e)
 {
@@ -153,6 +115,7 @@ event_insert(Event* e, struct KeyValue *k, const Config *conf)
 	}
 }
 
+/* insert provided date string into e->date */
 void
 event_insert_date(Event *e, const char *date, const Config *conf)
 {
@@ -235,6 +198,7 @@ eventtree_new()
 	return et;
 }
 
+/* initialize tree node */
 EventTree *
 eventtree_new_from_event(Event *e) {
 	EventTree *et = malloc(sizeof(EventTree));

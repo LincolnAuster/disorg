@@ -85,7 +85,6 @@ main(int argc, char **argv)
 
 	if (args->help) {
 		printf(USAGE);
-//	 	printf("Usage: %s [name]\n", argv[0]);
 	 	return 0;
 	}
 

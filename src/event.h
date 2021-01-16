@@ -1,7 +1,3 @@
-#define CLI_OUTPUT_LEN 80
-#define INITIAL_BUFFER_SIZE 12
-/* INITIAL_BUFFER_SIZE is just a random guess, i've tested nothing */
-
 /* opaque struct to contain data for a .ev */
 typedef struct {
 	char *title;
@@ -19,9 +15,6 @@ typedef struct EventTree {
 	struct EventTree *left;
 	struct EventTree *right;
 } EventTree;
-
-void buffer_append(char **, const char, size_t *);
-void buffer_append_str(char **, const char *, size_t *);
 
 Event *event_new_empty(const Config *);
 Event *event_free(Event *);

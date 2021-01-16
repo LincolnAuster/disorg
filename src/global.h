@@ -1,5 +1,7 @@
 #define CLI_OUTPUT_LEN 80
+/* these numbers are all random guesses - i've tested nothing */
 #define INITIAL_BUFFER_SIZE 12
+#define HASH_TABLE_SIZE 16
 
 struct KeyValue {
 	char *key;
@@ -7,3 +9,6 @@ struct KeyValue {
 };
 
 struct KeyValue *key_value_read(const char *);
+
+void buffer_append(char **, const char, size_t *);
+void buffer_append_str(char **, const char *, size_t *);
