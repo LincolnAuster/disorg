@@ -76,7 +76,7 @@ build_table(WikiTable *t, FILE *from)
 	ssize_t len;
 	path_l = NULL;
 	/* TODO this function correctly reads a wiki file, but
-	 * - tags must be implemented
+	 * - tags must be implemented (maybe by directory?)
 	 * - hashing must be implmented
 	 */
 

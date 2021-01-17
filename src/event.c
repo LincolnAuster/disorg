@@ -135,7 +135,8 @@ event_insert_date(Event *e, const char *date, const Config *conf)
 
 	if (conf_enabled(conf->four_digit_year)) {
 		e->year = make_four_digits(e->year);
-	}
+	} else if (e->year > 2000)
+		e->year -= 2000;
 }
 
 /* insert text into e->misc - set if empty, modify &(e->misc) otherwise */
