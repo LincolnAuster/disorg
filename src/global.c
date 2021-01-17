@@ -78,3 +78,21 @@ buffer_append_str(char **buffer, const char *string, size_t *capacity)
 	for (int i = 0; i < strlen(string); i++)
 		buffer_append(buffer, string[i], capacity);
 }
+
+/* hash a string to an integer, Horner's method copied verbatim from a textbook */
+unsigned int
+hash_str(char *s)
+{
+	unsigned int h = 0;
+	for (int i = 0; i < strlen(s); i++)
+		h = (31 * h + s[i]);
+	return h;
+}
+
+/* exit the program on error, print error to stderr */
+void
+die(const char *s)
+{
+	fprintf(stderr, "%s", s);
+	exit(1);
+}

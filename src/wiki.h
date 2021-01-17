@@ -6,7 +6,7 @@ typedef struct {
 
 /* Hash table for wiki entries, hashed by name */
 typedef struct {
-	Wiki *arr;
+	Wiki **arr;
 } WikiTable;
 
 Wiki *wiki_new_empty();
@@ -14,3 +14,6 @@ Wiki *wiki_free(Wiki *);
 void  wiki_fill_from_text(Wiki *, FILE *);
 void  wiki_disp(const Wiki *);
 void  wiki_vdisp(const Wiki *);
+
+WikiTable *wikitable_new();
+void wikitable_insert(WikiTable *, Wiki *);

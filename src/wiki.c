@@ -23,6 +23,7 @@ wiki_new_empty()
 Wiki *
 wiki_free(Wiki *w)
 {
+	/* i sold all my nonessential organs owo <3 */
 	if (w->title != NULL) free(w->title);
 	if (w->desc  != NULL) free(w->desc);
 	if (w->text  != NULL) free(w->text);
@@ -79,4 +80,24 @@ wiki_vdisp(const Wiki *w)
 {
 	wiki_disp(w);
 	printf("%s\n", w->text);
+}
+
+/* allocate a table */
+WikiTable *
+wikitable_new()
+{
+	WikiTable *t = malloc(sizeof(WikiTable));
+	if (t == NULL) die("malloc failed - OOM");
+
+	t->arr = malloc(sizeof(Wiki *) * HASH_SIZE);
+	return t;
+}
+
+/* insert wiki entry into the hash table by title */
+void
+wikitable_insert(WikiTable *t, Wiki *w)
+{
+	unsigned int i = hash_str(w->title) % HASH_SIZE;
+	t->arr[i] = w; /* TODO obviously stupid, i just cant think right now
+			  so resolvhing collisions is future future me's problem. */
 }

@@ -11,6 +11,10 @@ export FOUR_DIGIT_YEAR
 export DATE_FORMAT
 export TIME_FORMAT
 
+if [[ "$1" == "COUNT" ]]; then
+	find $BASE_DIRECTORY -type f -name "*.ev" | wc -l
+fi
+
 if [[ "$DEBUG" == "TRUE" ]]; then
 	echo -e "$(find $BASE_DIRECTORY -type f)" |
 		valgrind --leak-check=full $(dirname $0)/disorg-main "$@"

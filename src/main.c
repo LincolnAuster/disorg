@@ -45,8 +45,9 @@ build_tree(EventTree *et_root, Config *conf, FILE *from)
 	FILE *event_file;
 	ssize_t len;
 	size_t bufsize;
-	path_l = NULL;
 
+	path_l  = NULL;
+	bufsize = 0;
 	while ((len = getline(&path_l, &bufsize, from)) > 0) {
 		path_l[--len] = '\0'; /* strip newline from path */
 		/* verify file extension */
@@ -89,7 +90,7 @@ build_table(WikiTable *t, FILE *from)
 
 		Wiki* w = wiki_new_empty();
 		wiki_fill_from_text(w, wiki_file);
-		wiki_vdisp(w);
+		wikitable_insert(t, w);
 	}
 
 	return NULL;
