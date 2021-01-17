@@ -62,6 +62,12 @@ buffer_append(char **buffer, const char c, size_t *capacity)
 void
 buffer_append_str(char **buffer, const char *string, size_t *capacity)
 {
+	if (*buffer == NULL) {
+		*buffer = strdup(string);
+		*capacity = sizeof(string);
+		return;
+	}
+
 	int text_len = strlen(*buffer) + strlen(string);
 	if (text_len > *capacity) {
 		*capacity += strlen(string);

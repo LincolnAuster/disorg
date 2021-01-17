@@ -7,13 +7,7 @@
 #include "global.h"
 #include "conf.h"
 #include "event.h"
-
-#define USAGE "Usage: %s [w] [target] [--help]\n"                            \
-              "  w      - query wiki pages instead of agenda\n"              \
-	      "  target - show detailed view of event with title `target'\n" \
-	      "  --help - show this help message\n"                          \
-	      "If no arguments are provided, the agenda is enumerated.\n"    \
-	      , argv[0]
+#include "wiki.h"
 
 struct cargs {
 	char *target;
@@ -22,7 +16,7 @@ struct cargs {
 };
 
 struct cargs *read_args(int, char **);
-EventTree *build_tree(EventTree *, Config *conf, FILE *);
+EventTree *build_data(EventTree *, Config *conf, FILE *);
 
 struct cargs *
 read_args(int argc, char **argv) {
@@ -45,28 +39,60 @@ read_args(int argc, char **argv) {
 
 /* build an EventTree from paths in a specified file. */
 EventTree *
-build_tree(EventTree *et_root, Config *conf, FILE *from) {
-	char *in_line;
+build_tree(EventTree *et_root, Config *conf, FILE *from)
+{
+	char *path_l;
 	FILE *event_file;
-	in_line = NULL;
-
 	ssize_t len;
 	size_t bufsize;
-	while ((len = getline(&in_line, &bufsize, from)) > 0) {
-		in_line[--len] = '\0'; /* strip newline from path */
+	path_l = NULL;
 
-		event_file = fopen(in_line, "r");
+	while ((len = getline(&path_l, &bufsize, from)) > 0) {
+		path_l[--len] = '\0'; /* strip newline from path */
+		/* verify file extension */
+		if (strcmp(path_l + len - 3, EVENT_EXT) != 0) continue;
+
+		event_file = fopen(path_l, "r");
 		if (event_file == NULL) continue;
 
-		Event* cur_event = event_new_empty(conf);
-		event_fill_from_text(cur_event, event_file, conf);
+		Event* e = event_new_empty(conf);
+		event_fill_from_text(e, event_file, conf);
 
-		et_root = eventtree_insert(et_root, cur_event);
+		et_root = eventtree_insert(et_root, e);
 		fclose(event_file);
 	}
 
-	free(in_line);
+	free(path_l);
 	return et_root;
+}
+
+/* build WikiTable from paths, similar to build_tree */
+WikiTable *
+build_table(WikiTable *t, FILE *from)
+{
+	char *path_l;
+	FILE *wiki_file;
+	size_t bufsize;
+	ssize_t len;
+	path_l = NULL;
+	/* TODO this function correctly reads a wiki file, but
+	 * - tags must be implemented
+	 * - hashing must be implmented
+	 */
+
+	while ((len = getline(&path_l, &bufsize, from)) > 0) {
+		path_l[--len] = '\0'; /* strip newline */
+		if (strcmp(path_l + len - 3, WIKI_EXT) != 0) continue;
+
+		wiki_file = fopen(path_l, "r");
+		if (wiki_file == NULL) continue;
+
+		Wiki* w = wiki_new_empty();
+		wiki_fill_from_text(w, wiki_file);
+		wiki_vdisp(w);
+	}
+
+	return NULL;
 }
 
 int
@@ -74,6 +100,7 @@ main(int argc, char **argv)
 {
 	struct cargs *args;
 	EventTree *et_root;
+	WikiTable *wt;
 	Config conf;
 
 	conf.date_format     = getenv("DATE_FORMAT");
@@ -88,16 +115,20 @@ main(int argc, char **argv)
 	 	return 0;
 	}
 
-	et_root = NULL;
-	et_root = build_tree(et_root, &conf, stdin);
+	if (args->wiki) {
+		build_table(NULL, stdin);
+	} else {
+		et_root = NULL;
+		et_root = build_tree(et_root, &conf, stdin);
 
-	if (args->target != NULL)
-		eventtree_if(et_root, args->target, &event_vdisp);
-	else
-		eventtree_in_order(et_root, &event_disp);
+		if (args->target != NULL)
+			eventtree_if(et_root, args->target, &event_vdisp);
+		else
+			eventtree_in_order(et_root, &event_disp);
 
-	free(args->target);
-	free(args);
-	et_root = eventtree_free(et_root);
+		free(args->target);
+		free(args);
+		et_root = eventtree_free(et_root);
+	}
 	return 0;
 }
