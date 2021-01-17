@@ -1,8 +1,8 @@
 all:
-	gcc src/main.c src/conf.c src/event.c src/global.c src/wiki.c \
+	gcc src/main.c src/conf.c src/event.c src/global.c \
 		-o disorg-main -pedantic -g
 release:
-	gcc src/main.c src/event.c src/conf.c src/global.c src/wiki.c \
+	gcc src/main.c src/event.c src/conf.c src/global.c \
 		-o disorg-main
 install: release
 	cp disorg-main disorg.sh /usr/local/bin/

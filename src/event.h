@@ -25,10 +25,11 @@ void   event_insert_date(Event *, const char *, const Config *);
 void   event_insert_misc(Event *, char *, const Config *);
 void   event_fill_from_text(Event *, FILE *, const Config *);
 
-int event_compare(Event *, Event *);
+int event_compare_time(Event *, Event *);
+int event_compare_name(Event *, Event *);
 
 EventTree *eventtree_new();
-EventTree *eventtree_insert(EventTree *, Event *);
+EventTree *eventtree_insert(EventTree *, Event *, int (*)(Event *, Event *));
 void      *eventtree_free(EventTree *);
 EventTree *eventtree_new_from_event(Event *); 
 void       eventtree_in_order(EventTree *, void (*)(Event *));

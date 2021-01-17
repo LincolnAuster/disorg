@@ -164,7 +164,7 @@ event_insert_misc(Event *e, char *text, const Config *conf)
 
 /* returns 0 if equal, below if a < b and 1 if b > a */
 int
-event_compare(Event *a, Event *b)
+event_compare_time(Event *a, Event *b)
 {
 	struct tm t;
 	t.tm_year  = a->year;
@@ -186,6 +186,13 @@ event_compare(Event *a, Event *b)
 	long int b_unix = mktime(&t);
 
 	return a_unix - b_unix;
+}
+
+/* strcmp the names of events, for alphabetical sorting */
+int
+event_compare_name(Event *a, Event *b)
+{
+	return strcmp(a->title, b->title);
 }
 
 /* return new empty event tree */
@@ -211,15 +218,15 @@ eventtree_new_from_event(Event *e) {
 
 /* insert an event into provided node */
 EventTree *
-eventtree_insert(EventTree *et, Event *e)
+eventtree_insert(EventTree *et, Event *e, int (*comp)(Event *, Event *))
 {
 	if (et == NULL) return eventtree_new_from_event(e);
-	int cmp = event_compare(et->event, e);
+	int cmp = comp(et->event, e);
 
 	if (cmp < 0)
-		et->left  = eventtree_insert(et->left, e);
+		et->left  = eventtree_insert(et->left, e, comp);
 	else if (cmp > 0)
-		et->right = eventtree_insert(et->right, e);
+		et->right = eventtree_insert(et->right, e, comp);
 
 	return et;
 }
