@@ -2,11 +2,41 @@
 <p align="center">disorganized program inpsired by emacs' org-mode<br/>a tool to maintain a schedule and agenda over a directory of plain-text files</p>
 
 ## Usage
-When called over a directory (by default ~/.disorg, as specified in config), the binary will aggregate events and wiki pages. Events, marked by a .ev file extension, define a single time associated with a set of metadata (title, description, etc) as well as any free form text. Wiki files provide a searchable database of information, indexed by name.
+`disorg` aggregates an agenda based off of events (plain text .ev files) located in a base directory (by default `~/.disorg`). When `disorg.sh` (not `disorg-main`) is run with no arguments, it displays an agenda, an ordered list containing overviews of all events in the base directory. The current date is marked relative to the events, i.e.:
+```
+--------------------------------------------------------------------------------
+TODAY
+--------------------------------------------------------------------------------
+OCS25 Readings                                                             TITLE
+Undirected graphs                                                    DESCRIPTION
+00:00
+18/01/2021
+--------------------------------------------------------------------------------
+German Lesson Backup Platform                                              TITLE
+(null)                                                               DESCRIPTION
+23:59
+18/01/2021
+--------------------------------------------------------------------------------
+German Readings                                                            TITLE
+Assignments 3 and 4                                                  DESCRIPTION
+00:00
+19/01/2021
+--------------------------------------------------------------------------------
+Schedule TAA Presentation                                                  TITLE
+(null)                                                               DESCRIPTION
+00:00
+20/01/2021
+--------------------------------------------------------------------------------
+TAA Readings                                                               TITLE
+(null)                                                               DESCRIPTION
+00:00
+01/20/2021
+```
+The `-W` flag can be passed to list wiki files (.wi plain text files) in alphabetical order similarly.
 
-When no arguments are provided, the agenda (ordered list of events in the given directory) is written to stdout. If there are any other arguments, the first is interpreted as a name, and the corresponding event is displayed in its entirety. This is the overview displayed in the agenda followed by any unlabeled text in the .ev file.
+For a detailed view of one item (wiki or event), the name can be passed to the script (as a single argument: `"OCS25 Readings"` over `OCS25 Readings`).
 
-To add events or wiki pages, use a text editor. This program is only able to read events and exists purely to aggregate.
+Adding, moving, deleting, or otherwise modifying events is not done through this program, it should be done through a text editor.
 
 ### Events
 .ev files have the following form:
@@ -23,21 +53,22 @@ any extra associated information
 ### Wiki
 .wi files are identical to event files, but only specify a title.
 
+## Building/Installing
+`make && sudo make install`
+
 ## Configuration
 Configuration is done through a shell script, located at `~/.config/disorg/disorg`. The wrapper script around the binary sets default values for the configuration options, source the config file, and then export the values, to be loaded by `getenv()` in the binary.
 
 Current config options are:
 ```bash
-DEBUG="FALSE"
-BASE_DIRECTORY="$HOME/.disorg"
+BASE_DIRECTORY="$HOME/.disorg" # where disorg looks for event/wiki files
 DATE_FORMAT="D-M-Y"
 TIME_FORMAT="H:M"
+FOUR_DIGIT_YEAR="TRUE"         # 2021 vs 21
+DEBUG="FALSE"                  # run with valgrind to check for memory leaks
 ```
 
 By default: dates are separated by dashes and in day-month-year format. Times are expected to be in 24-hour form.
-
-## Structure
-A single binary parses event or wiki files as specified by the command line arguments given by the `disorg.sh` script.
 
 ## TODOs
 * ✨ make software good ✨
