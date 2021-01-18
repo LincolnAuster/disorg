@@ -40,16 +40,15 @@ fi
 # order in which the files are sorted on output - wiki files have no associated
 # time, and as such cannot be sorted by that attribute. Instead, they are sorted
 # alphabetically.
+PATTERN="*.ev"
 if [[ "$*" == *"-W"* ]]; then
 	PATTERN="*.wi"
 fi
-echo $PATTERN
 
+FILES=$(find $BASE_DIRECTORY -type f -name $PATTERN)
 # Call the main binary: write all files matching args to stdin.
 if [[ "$DEBUG" == "TRUE" ]]; then
-	echo -e "$(find $BASE_DIRECTORY -type f -name $PATTERN)" |
-		valgrind --leak-check=full $(dirname $0)/disorg-main "$@"
+	valgrind --leak-check=full $(dirname $0)/disorg-main "$@" <<< $FILES
 else
-	echo -e "$(find $BASE_DIRECTORY -type f -name $PATTERN)" |
-		$(dirname $0)/disorg-main "$@"
+	$(dirname $0)/disorg-main "$@" <<< $FILES
 fi
