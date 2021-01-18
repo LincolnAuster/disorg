@@ -8,6 +8,7 @@ typedef struct {
 	unsigned int day;
 	unsigned int month;
 	unsigned int year;
+	bool short_disp;
 } Event;
 
 typedef struct EventTree {
@@ -17,9 +18,12 @@ typedef struct EventTree {
 } EventTree;
 
 Event *event_new_empty(const Config *);
+Event *event_now(const Config *);
 Event *event_free(Event *);
-void   event_disp(Event *);
-void   event_vdisp(Event *);
+void   event_disp(const Event *);
+void   event_sdisp(const Event *);
+void   event_ndisp(const Event *);
+void   event_vdisp(const Event *);
 void   event_insert(Event *, struct KeyValue *, const Config *);
 void   event_insert_date(Event *, const char *, const Config *);
 void   event_insert_misc(Event *, char *, const Config *);
@@ -32,5 +36,5 @@ EventTree *eventtree_new();
 EventTree *eventtree_insert(EventTree *, Event *, int (*)(Event *, Event *));
 void      *eventtree_free(EventTree *);
 EventTree *eventtree_new_from_event(Event *); 
-void       eventtree_in_order(EventTree *, void (*)(Event *));
-void       eventtree_if(EventTree *, char *, void (*)(Event *));
+void       eventtree_in_order(EventTree *, void (*)(const Event *));
+void       eventtree_if(EventTree *, char *, void (*)(const Event *));

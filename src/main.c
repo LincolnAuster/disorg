@@ -83,10 +83,13 @@ main(int argc, char **argv)
 	args = read_args(argc, argv);
 
 	et_root = NULL;
-	if (args->wiki)
+	if (args->wiki) {
 		et_root = build_tree(et_root, &conf, stdin, event_compare_name);
-	else
+	} else {
 		et_root = build_tree(et_root, &conf, stdin, event_compare_time);
+		Event *now = event_now(&conf);
+		eventtree_insert(et_root, now, event_compare_time);
+	}
 
 	if (args->target != NULL)
 		eventtree_if(et_root, args->target, event_vdisp);

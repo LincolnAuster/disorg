@@ -9,7 +9,7 @@
 #include "event.h"
 
 /* initialize a new empty Event on 0/0/current year 0:0:0 */
-Event*    
+Event *    
 event_new_empty(const Config *conf)
 {
         time_t s = time(NULL);
@@ -31,11 +31,46 @@ event_new_empty(const Config *conf)
 	e->day         = 0;
 	e->month       = 0;
 	e->year        = current_year;
+	e->short_disp  = false;
 
 	return e;
 }
 
-/* murder event :) */
+/* initialize event with title Now on current date and time */
+Event *
+event_now(const Config *conf)
+{
+        time_t s = time(NULL);
+
+        struct tm *lt = localtime(&s);
+        int current_year  = lt->tm_year;
+	int current_month = lt->tm_mon;
+	int current_day   = lt->tm_mday;
+	int current_hour  = lt->tm_hour;
+	int current_min   = lt->tm_min;
+ 
+        if (conf_enabled(conf->four_digit_year))
+		current_year += 1900;
+        else
+		current_year -= 100;
+
+	Event *e = malloc(sizeof(Event));
+	e->title = malloc(10);
+	sprintf(e->title, "%sTODAY%s", ACCENT_COLOR, RESET_COLOR);
+	e->description = NULL;
+	e->misc        = NULL;
+	e->hour        = current_hour;
+	e->minute      = current_min;
+	e->day         = current_day;
+	e->month       = current_month;
+	e->year        = current_year;
+	e->short_disp  = true;
+
+	return e;
+
+}
+
+/* free up all the fields, assumes dynamically allocated or null */
 Event
 *event_free(Event *e)
 {
@@ -69,9 +104,17 @@ event_fill_from_text(Event *e, FILE *f, const Config *c)
 	free(file_line);
 }
 
+/* write the event to stdout, decide on type of formatting */
+void
+event_disp(const Event *e)
+{
+	if (e->short_disp) event_sdisp(e);
+	else               event_ndisp(e);
+}
+
 /* write the event to stdout with some pretty formatting ✨ */
 void
-event_disp(Event *e)
+event_ndisp(const Event *e)
 {
 	for (int i = 0; i < CLI_OUTPUT_LEN; i++) printf("-");
 	printf("\n");
@@ -87,9 +130,17 @@ event_disp(Event *e)
 	printf("/%02i\n", e->year);
 }
 
+/* display an event, but only on two lines (i.e., TODAY event */
+void
+event_sdisp(const Event *e)
+{
+	for (int i = 0; i < CLI_OUTPUT_LEN; i++) printf("-");
+	printf("\n%s\n", e->title);
+}
+
 /* verbose display, display with miscellaneous field */
 void
-event_vdisp(Event *e) {
+event_vdisp(const Event *e) {
 	event_disp(e);
 	if (e->misc == NULL) return;
 	printf("%s", e->misc);
@@ -247,7 +298,7 @@ eventtree_free(EventTree *et)
  * call the specified function on the values.
  */
 void
-eventtree_in_order(EventTree *et, void (*fun)(Event *))
+eventtree_in_order(EventTree *et, void (*fun)(const Event *))
 {
 	if (et == NULL) return;
 	eventtree_in_order(et->right, fun);
@@ -259,7 +310,7 @@ void
 /* Traverse the tree, call specified function if title matches provided
  * target.
  */
-eventtree_if(EventTree *et, char *t_tgt, void (*fun)(Event *))
+eventtree_if(EventTree *et, char *t_tgt, void (*fun)(const Event *))
 {
 	if (et == NULL) return;
 	if (strcmp(et->event->title, t_tgt) == 0) {
