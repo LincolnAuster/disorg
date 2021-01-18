@@ -56,7 +56,7 @@ event_now(const Config *conf)
 
 	Event *e = malloc(sizeof(Event));
 	e->title = malloc(10);
-	sprintf(e->title, "%sTODAY%s", ACCENT_COLOR, RESET_COLOR);
+	sprintf(e->title, "\033[%smTODAY%s", conf->today_color, RESET_COLOR);
 	e->description = NULL;
 	e->misc        = NULL;
 	e->hour        = current_hour;

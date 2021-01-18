@@ -79,6 +79,7 @@ main(int argc, char **argv)
 	conf.time_format     = getenv("TIME_FORMAT");
 	conf.week_start      = getenv("WEEK_START");
 	conf.four_digit_year = getenv("FOUR_DIGIT_YEAR");
+	conf.today_color     = getenv("TODAY_COLOR");
 
 	args = read_args(argc, argv);
 

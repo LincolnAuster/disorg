@@ -7,7 +7,6 @@
 #define WIKI_EXT  ".wi"
 #define WIKI_ARG "-W"
 
-#define ACCENT_COLOR "\033[31;1;4m"
 #define RESET_COLOR  "\033[0m"
 
 struct KeyValue {
