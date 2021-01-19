@@ -70,7 +70,7 @@ TODAY_COLOR='91'               # the ANSI escape code color used to mark the cur
 PHIGH_COLOR='31'               # The ANSI escape code color used to mark high-priority events
 PMED_COLOR='35'                # The ANSI escape code color used to mark medium-priority events
 PLOW_COLOR='0'                 # The ANSI escape color code used ot mark low-priority events.
-                                 By default this is just the reset code to remove any color.
+                               # By default this is just the reset code to remove any color.
 DEBUG="FALSE"                  # run with valgrind to check for memory leaks
 ```
 
