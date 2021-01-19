@@ -32,7 +32,7 @@ TAA Readings                                                               TITLE
 00:00
 01/20/2021
 ```
-The `-W` flag can be passed to list wiki files (.wi plain text files) in alphabetical order similarly.
+The `-W` flag can be passed to list wiki files (.wi plain text files) similarly in alphabetical order.
 
 For a detailed view of one item (wiki or event), the name can be passed to the script (as a single argument: `"OCS25 Readings"` over `OCS25 Readings`).
 
@@ -43,6 +43,7 @@ Adding, moving, deleting, or otherwise modifying events is not done through this
 ```
 !TITLE title
 !DESCRIPTION a short description
+!PRIORITY HIGH/MED/LOW
 
 !DATE 1/1/2020
 !TIME 00:00
@@ -65,6 +66,11 @@ BASE_DIRECTORY="$HOME/.disorg" # where disorg looks for event/wiki files
 DATE_FORMAT="D-M-Y"
 TIME_FORMAT="H:M"
 FOUR_DIGIT_YEAR="TRUE"         # 2021 vs 21
+TODAY_COLOR='91'               # the ANSI escape code color used to mark the current time/today
+PHIGH_COLOR='31'               # The ANSI escape code color used to mark high-priority events
+PMED_COLOR='35'                # The ANSI escape code color used to mark medium-priority events
+PLOW_COLOR='0'                 # The ANSI escape color code used ot mark low-priority events.
+                                 By default this is just the reset code to remove any color.
 DEBUG="FALSE"                  # run with valgrind to check for memory leaks
 ```
 
