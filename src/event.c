@@ -245,7 +245,7 @@ event_compare_time(Event *a, Event *b)
 int
 event_compare_name(Event *a, Event *b)
 {
-	return strcmp(a->title, b->title);
+	return strcmp(b->title, a->title);
 }
 
 /* return new empty event tree */
