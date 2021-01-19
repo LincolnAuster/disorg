@@ -78,6 +78,9 @@ main(int argc, char **argv)
 	conf.week_start      = getenv("WEEK_START");
 	conf.four_digit_year = getenv("FOUR_DIGIT_YEAR");
 	conf.today_color     = getenv("TODAY_COLOR");
+	conf.pcolors[0] = getenv("PLOW_COLOR");
+	conf.pcolors[1] = getenv("PMED_COLOR");
+	conf.pcolors[2] = getenv("PHIGH_COLOR");
 
 	args = read_args(argc, argv);
 
@@ -85,15 +88,15 @@ main(int argc, char **argv)
 	if (args.wiki) {
 		et_root = build_tree(et_root, &conf, stdin, event_compare_name);
 	} else {
-		// Event *now = event_now(&conf);
-		// eventtree_insert(et_root, now, event_compare_time);
 		et_root = build_tree(et_root, &conf, stdin, event_compare_time);
+		Event *now = event_now(&conf);
+		eventtree_insert(et_root, now, event_compare_time);
 	}
 
 	if (args.target != NULL)
-		eventtree_if(et_root, args.target, event_vdisp);
+		eventtree_if(et_root, args.target, &conf, event_vdisp);
 	else
-		eventtree_in_order(et_root, event_disp);
+		eventtree_in_order(et_root, &conf, event_disp);
 
 	et_root = eventtree_free(et_root);
 	return 0;

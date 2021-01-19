@@ -8,6 +8,7 @@ typedef struct {
 	const char *week_start;
 	const char *four_digit_year;
 	const char *today_color;
+	const char *pcolors[3];
 } Config;
 
 bool conf_enabled(const char *);

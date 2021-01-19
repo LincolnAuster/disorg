@@ -7,7 +7,10 @@
 #define WIKI_EXT  ".wi"
 #define WIKI_ARG "-W"
 
-#define RESET_COLOR  "\033[0m"
+#define RESET_COLOR "\033[0m"
+#define PRIORITY_STR_HIGH "HIGH"
+#define PRIORITY_STR_MID  "MED"
+#define PRIORITY_STR_LOW  "LOW"
 
 struct KeyValue {
 	char *key;

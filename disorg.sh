@@ -10,12 +10,18 @@ DATE_FORMAT="D-M-Y"
 TIME_FORMAT="H:M"
 FOUR_DIGIT_YEAR="TRUE"
 TODAY_COLOR='91'
+PHIGH_COLOR='31'
+PMED_COLOR='35'
+PLOW_COLOR='30'
 DEBUG="FALSE"
 source ~/.config/disorg/disorg 2> /dev/null
 export FOUR_DIGIT_YEAR
 export DATE_FORMAT
 export TIME_FORMAT
 export TODAY_COLOR
+export PHIGH_COLOR
+export PMED_COLOR
+export PLOW_COLOR
 
 # COUNT can be specified to return the number of events, in total, located
 # in the BASE_DIRECTORY. This does _not_ check if the events are valid,

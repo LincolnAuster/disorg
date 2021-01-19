@@ -25,6 +25,7 @@ event_new_empty(const Config *conf)
 	e->title       = NULL;
 	e->description = NULL;
 	e->misc        = NULL;
+	e->p           = low;
 	e->hour        = 0;
 	e->minute      = 0;
 	e->day         = 0;
@@ -49,20 +50,17 @@ event_now(const Config *conf)
         else
 		current_year -= 100;
 
-	Event *e = malloc(sizeof(Event));
+	Event *e = event_new_empty(conf);
 	e->title = malloc(10);
 	sprintf(e->title, "\033[%smTODAY%s", conf->today_color, RESET_COLOR);
-	e->description = NULL;
-	e->misc        = NULL;
 	e->hour        = lt->tm_hour;
 	e->minute      = lt->tm_min;
 	e->day         = lt->tm_mday;
-	e->month       = lt->tm_mon;
+	e->month       = lt->tm_mon + 1;
 	e->year        = current_year;
 	e->short_disp  = true;
 
 	return e;
-
 }
 
 /* free up all the fields, assumes dynamically allocated or null */
@@ -101,15 +99,15 @@ event_fill_from_text(Event *e, FILE *f, const Config *c)
 
 /* write the event to stdout, decide on type of formatting */
 void
-event_disp(const Event *e)
+event_disp(const Event *e, const Config *c)
 {
 	if (e->short_disp) event_sdisp(e);
-	else               event_ndisp(e);
+	else               event_ndisp(e, c);
 }
 
 /* write the event to stdout with some pretty formatting ✨ */
 void
-event_ndisp(const Event *e)
+event_ndisp(const Event *e, const Config *c)
 {
 	for (int i = 0; i < CLI_OUTPUT_LEN; i++) printf("-");
 	printf("\n");
@@ -117,15 +115,16 @@ event_ndisp(const Event *e)
 	printf("%-*sTITLE\n", CLI_OUTPUT_LEN - 5, e->title);
 	printf("%-*sDESCRIPTION\n", CLI_OUTPUT_LEN - 11, e->description);
 	
-	printf("%02i", e->hour);
-	printf(":%02i\n", e->minute);
+	printf("\033[%sm", c->pcolors[e->p]);
+	printf("%02i:%02i, (%d)\n", e->hour, e->minute, e->p);
+	printf(RESET_COLOR);
 	
 	printf("%02i", e->day);
 	printf("/%02i", e->month);
 	printf("/%02i\n", e->year);
 }
 
-/* display an event, but only on two lines (i.e., TODAY event */
+/* display an event, but only on two lines (i.e., TODAY event) */
 void
 event_sdisp(const Event *e)
 {
@@ -135,8 +134,8 @@ event_sdisp(const Event *e)
 
 /* verbose display, display with miscellaneous field */
 void
-event_vdisp(const Event *e) {
-	event_disp(e);
+event_vdisp(const Event *e, const Config *c) {
+	event_disp(e, c);
 	if (e->misc == NULL) return;
 	printf("%s", e->misc);
 }
@@ -156,6 +155,8 @@ event_insert(Event* e, struct KeyValue *k, const Config *conf)
 		e->minute = match_int('M', k->val, conf->time_format);
 	} else if (strcmp(k->key, "DATE") == 0) {
 		event_insert_date(e, k->val, conf);
+	} else if (strcmp(k->key, "PRIORITY") == 0) {
+		event_insert_priority(e, k->val, conf);
 	} else if (strcmp(k->key, "MISC") == 0) {
 		event_insert_misc(e, k->val, conf);
 	}
@@ -183,6 +184,18 @@ event_insert_date(Event *e, const char *date, const Config *conf)
 		e->year = make_four_digits(e->year);
 	} else if (e->year > 2000)
 		e->year -= 2000;
+}
+
+/* insert a priority based on the PRIORITY_STR_* macros in global.h */
+void
+event_insert_priority(Event *e, char *text, const Config *conf)
+{
+	if (strcmp(text, PRIORITY_STR_HIGH) == 0)
+		e->p = 2;
+	else if (strcmp(text, PRIORITY_STR_MID) == 0)
+		e->p = 1;
+	else if (strcmp(text, PRIORITY_STR_LOW) == 0)
+		e->p = 0;
 }
 
 /* insert text into e->misc - set if empty, modify &(e->misc) otherwise */
@@ -290,26 +303,28 @@ eventtree_free(EventTree *et)
  * call the specified function on the values.
  */
 void
-eventtree_in_order(EventTree *et, void (*fun)(const Event *))
+eventtree_in_order(EventTree *et, const Config *c,
+		   void (*fun)(const Event *, const Config *))
 {
 	if (et == NULL) return;
-	eventtree_in_order(et->right, fun);
-	fun(et->event);
-	eventtree_in_order(et->left, fun);
+	eventtree_in_order(et->right, c, fun);
+	fun(et->event, c);
+	eventtree_in_order(et->left, c, fun);
 }
 
-void
 /* Traverse the tree, call specified function if title matches provided
  * target.
  */
-eventtree_if(EventTree *et, char *t_tgt, void (*fun)(const Event *))
+void
+eventtree_if(EventTree *et, char *t_tgt, const Config *c,
+             void (*fun)(const Event *, const Config *))
 {
 	if (et == NULL) return;
 	if (strcmp(et->event->title, t_tgt) == 0) {
-		fun(et->event);
+		fun(et->event, c);
 		return;
 	}
 
-	eventtree_if(et->left, t_tgt, fun);
-	eventtree_if(et->right, t_tgt, fun);
+	eventtree_if(et->left, t_tgt, c, fun);
+	eventtree_if(et->right, t_tgt, c, fun);
 }
