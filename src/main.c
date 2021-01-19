@@ -29,7 +29,7 @@ read_args(int argc, char **argv) {
 		if (strcmp(argv[i], WIKI_ARG) == 0)
 			c.wiki = true;
 		else
-			c.target = strdup(argv[i]);
+			c.target = argv[i];
 	}
 
 	return c;
