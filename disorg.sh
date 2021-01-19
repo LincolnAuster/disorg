@@ -12,7 +12,7 @@ FOUR_DIGIT_YEAR="TRUE"
 TODAY_COLOR='91'
 PHIGH_COLOR='31'
 PMED_COLOR='35'
-PLOW_COLOR='30'
+PLOW_COLOR='0'
 DEBUG="FALSE"
 source ~/.config/disorg/disorg 2> /dev/null
 export FOUR_DIGIT_YEAR

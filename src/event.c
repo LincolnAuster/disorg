@@ -117,11 +117,11 @@ event_ndisp(const Event *e, const Config *c)
 	
 	printf("\033[%sm", c->pcolors[e->p]);
 	printf("%02i:%02i, (%d)\n", e->hour, e->minute, e->p);
-	printf(RESET_COLOR);
 	
 	printf("%02i", e->day);
 	printf("/%02i", e->month);
 	printf("/%02i\n", e->year);
+	printf(RESET_COLOR);
 }
 
 /* display an event, but only on two lines (i.e., TODAY event) */
