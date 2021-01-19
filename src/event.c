@@ -25,7 +25,8 @@ event_new_empty(const Config *conf)
 	e->title       = NULL;
 	e->description = NULL;
 	e->misc        = NULL;
-	e->p           = low;
+	e->misc_cap    = 0;
+	e->p           = 0;
 	e->hour        = 0;
 	e->minute      = 0;
 	e->day         = 0;
@@ -202,23 +203,19 @@ event_insert_priority(Event *e, char *text, const Config *conf)
 void
 event_insert_misc(Event *e, char *text, const Config *conf)
 {
-	size_t capacity;
 	char **addr;
-
-	capacity = sizeof(e->misc) / sizeof(char);
-	addr     = &(e->misc);
+	addr = &(e->misc);
 
 	if (text[0] == '\0') return;
 	if (e->misc == NULL) {
-		e->misc = malloc((strlen(text) + 2) * sizeof(char));
+		e->misc_cap = strlen(text) + 2;
+		e->misc = malloc(e->misc_cap);
 		strcpy(e->misc, text);
-		capacity += 2;
 	} else {
-		buffer_append_str(addr, text, &capacity);
+		buffer_append_str(addr, text, &(e->misc_cap));
 	}
 
-	capacity = sizeof(e->misc) / sizeof(char);
-	buffer_append(addr, '\n', &capacity);
+	buffer_append(addr, '\n', &(e->misc_cap));
 }
 
 /* returns 0 if equal, below if a < b and 1 if b > a */

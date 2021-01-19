@@ -8,6 +8,7 @@ typedef struct {
 	char *title;
 	char *description;
 	char *misc;
+	size_t misc_cap;
 	int p;
 	unsigned int hour;
 	unsigned int minute;
