@@ -13,25 +13,23 @@ struct cargs {
 	bool wiki;
 };
 
-struct cargs *read_args(int, char **);
+struct cargs read_args(int, char **);
 EventTree *build_tree(EventTree *,
 		      Config *conf,
 		      FILE *,
 		      int (*)(Event *, Event *));
 
-struct cargs *
+struct cargs
 read_args(int argc, char **argv) {
-	struct cargs *c = malloc(sizeof(struct cargs));
-	c->target = NULL;
-	c->wiki = false;
+	struct cargs c;
+	c.target = NULL;
+	c.wiki = false;
 
 	for (int i = 1; i < argc; i++) {
-		if (strcmp(argv[i], WIKI_ARG) == 0) {
-			c->wiki = true;
-		} else {
-			if (c->target != NULL) free(c->target);
-			c->target = strdup(argv[i]);
-		}
+		if (strcmp(argv[i], WIKI_ARG) == 0)
+			c.wiki = true;
+		else
+			c.target = strdup(argv[i]);
 	}
 
 	return c;
@@ -71,7 +69,7 @@ build_tree(EventTree *et_root,
 int
 main(int argc, char **argv)
 {
-	struct cargs *args;
+	struct cargs args;
 	EventTree *et_root;
 	Config conf;
 
@@ -84,21 +82,19 @@ main(int argc, char **argv)
 	args = read_args(argc, argv);
 
 	et_root = NULL;
-	if (args->wiki) {
+	if (args.wiki) {
 		et_root = build_tree(et_root, &conf, stdin, event_compare_name);
 	} else {
+		// Event *now = event_now(&conf);
+		// eventtree_insert(et_root, now, event_compare_time);
 		et_root = build_tree(et_root, &conf, stdin, event_compare_time);
-		Event *now = event_now(&conf);
-		eventtree_insert(et_root, now, event_compare_time);
 	}
 
-	if (args->target != NULL)
-		eventtree_if(et_root, args->target, event_vdisp);
+	if (args.target != NULL)
+		eventtree_if(et_root, args.target, event_vdisp);
 	else
 		eventtree_in_order(et_root, event_disp);
 
-	free(args->target);
-	free(args);
 	et_root = eventtree_free(et_root);
 	return 0;
 }

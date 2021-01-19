@@ -13,7 +13,6 @@ Event *
 event_new_empty(const Config *conf)
 {
         time_t s = time(NULL);
-
         struct tm *lt = localtime(&s);
         int current_year = lt->tm_year;
  
@@ -44,10 +43,6 @@ event_now(const Config *conf)
 
         struct tm *lt = localtime(&s);
         int current_year  = lt->tm_year;
-	int current_month = lt->tm_mon;
-	int current_day   = lt->tm_mday;
-	int current_hour  = lt->tm_hour;
-	int current_min   = lt->tm_min;
  
         if (conf_enabled(conf->four_digit_year))
 		current_year += 1900;
@@ -59,10 +54,10 @@ event_now(const Config *conf)
 	sprintf(e->title, "\033[%smTODAY%s", conf->today_color, RESET_COLOR);
 	e->description = NULL;
 	e->misc        = NULL;
-	e->hour        = current_hour;
-	e->minute      = current_min;
-	e->day         = current_day;
-	e->month       = current_month;
+	e->hour        = lt->tm_hour;
+	e->minute      = lt->tm_min;
+	e->day         = lt->tm_mday;
+	e->month       = lt->tm_mon;
 	e->year        = current_year;
 	e->short_disp  = true;
 
@@ -71,8 +66,8 @@ event_now(const Config *conf)
 }
 
 /* free up all the fields, assumes dynamically allocated or null */
-Event
-*event_free(Event *e)
+Event *
+event_free(Event *e)
 {
 	if (e == NULL) return NULL;
 	if (e->title != NULL)       free(e->title);
@@ -217,26 +212,22 @@ event_insert_misc(Event *e, char *text, const Config *conf)
 int
 event_compare_time(Event *a, Event *b)
 {
-	struct tm *at, *bt;
-	at = malloc(sizeof(struct tm));
-	bt = malloc(sizeof(struct tm));
-	at->tm_year = a->year - 1900;
-	bt->tm_year = b->year - 1900;
-	at->tm_mon  = a->month - 1;
-	bt->tm_mon  = b->month - 1;
-	at->tm_mday = a->day;
-	bt->tm_mday = b->day;
-	at->tm_hour = a->hour;
-	bt->tm_hour = b->hour;
-	at->tm_min  = a->minute;
-	bt->tm_min  = b->minute;
-	at->tm_sec = bt->tm_sec = 0;
-	at->tm_isdst = bt->tm_isdst = 0;
-	time_t att = mktime(at);
-	time_t btt = mktime(bt);
+	struct tm at, bt;
+	at.tm_year = a->year - 1900;
+	bt.tm_year = b->year - 1900;
+	at.tm_mon  = a->month - 1;
+	bt.tm_mon  = b->month - 1;
+	at.tm_mday = a->day;
+	bt.tm_mday = b->day;
+	at.tm_hour = a->hour;
+	bt.tm_hour = b->hour;
+	at.tm_min  = a->minute;
+	bt.tm_min  = b->minute;
+	at.tm_sec = bt.tm_sec = 0;
+	at.tm_isdst = bt.tm_isdst = 0;
+	time_t att = mktime(&at);
+	time_t btt = mktime(&bt);
 
-	free(at);
-	free(bt);
 	return (int) difftime(att, btt);
 }
 
@@ -277,7 +268,7 @@ eventtree_insert(EventTree *et, Event *e, int (*comp)(Event *, Event *))
 
 	if (cmp < 0)
 		et->left  = eventtree_insert(et->left, e, comp);
-	else if (cmp > 0)
+	else if (cmp >= 0)
 		et->right = eventtree_insert(et->right, e, comp);
 
 	return et;
