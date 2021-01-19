@@ -217,26 +217,27 @@ event_insert_misc(Event *e, char *text, const Config *conf)
 int
 event_compare_time(Event *a, Event *b)
 {
-	struct tm t;
-	t.tm_year  = a->year;
-	t.tm_mon   = a->month;
-	t.tm_mday  = a->day;
-	t.tm_hour  = a->hour;
-	t.tm_min   = a->minute;
-	t.tm_sec   = 0;
-	t.tm_isdst = 0;
-	long int a_unix = mktime(&t);
+	struct tm *at, *bt;
+	at = malloc(sizeof(struct tm));
+	bt = malloc(sizeof(struct tm));
+	at->tm_year = a->year - 1900;
+	bt->tm_year = b->year - 1900;
+	at->tm_mon  = a->month - 1;
+	bt->tm_mon  = b->month - 1;
+	at->tm_mday = a->day;
+	bt->tm_mday = b->day;
+	at->tm_hour = a->hour;
+	bt->tm_hour = b->hour;
+	at->tm_min  = a->minute;
+	bt->tm_min  = b->minute;
+	at->tm_sec = bt->tm_sec = 0;
+	at->tm_isdst = bt->tm_isdst = 0;
+	time_t att = mktime(at);
+	time_t btt = mktime(bt);
 
-	t.tm_year  = b->year;
-	t.tm_mon   = b->month;
-	t.tm_mday  = b->day;
-	t.tm_hour  = b->hour;
-	t.tm_min   = b->minute;
-	t.tm_sec   = 0;
-	t.tm_isdst = 0;
-	long int b_unix = mktime(&t);
-
-	return a_unix - b_unix;
+	free(at);
+	free(bt);
+	return (int) difftime(att, btt);
 }
 
 /* strcmp the names of events, for alphabetical sorting */
