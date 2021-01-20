@@ -124,7 +124,7 @@ tm_dascii(const struct tm *t, const Config *c)
 {
 	char *time = malloc(11);
 	sprintf(time, "%02d/%02d/%02d", t->tm_mday,
-	                                t->tm_mon,
+	                                t->tm_mon + 1,
 					t->tm_year + 1900);
 	return time;
 }
