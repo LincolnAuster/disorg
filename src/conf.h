@@ -13,8 +13,9 @@ typedef struct {
 
 bool conf_enabled(const char *);
 
-unsigned int match_int(const char, const char *, const char *);
-int get_nth(int, const char, const char *);
+unsigned int match_int(char, const char *, const char *);
+unsigned int char_location(char, char, const char *);
+unsigned int get_nth(int, char, const char *);
 
 int  make_four_digits(int);
 bool is_alphanumeric(char);
