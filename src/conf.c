@@ -54,6 +54,9 @@ match_int(char location_char, const char *string, const char *format_string)
 	return get_nth(location, delim, string);
 }
 
+/* given a string with fields separated by a delimeter, get the nth int passed
+ * the integer (atoi)
+ */
 int
 get_nth(int location, const char delim, const char *string)
 {
@@ -78,7 +81,6 @@ get_nth(int location, const char delim, const char *string)
 
 	int ans = atoi(token);
 	free(copy_a);
-	// free(result);
 	free(delim_str);
 	return ans;
 }

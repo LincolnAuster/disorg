@@ -4,8 +4,8 @@
 #include <string.h>
 #include <time.h>
 
-#include "global.h"
 #include "conf.h"
+#include "global.h"
 #include "event.h"
 
 struct cargs {

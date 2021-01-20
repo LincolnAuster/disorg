@@ -1,10 +1,12 @@
-/* scan a string for !KEY VALUE pairs, return KeyValue struct */
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 
+#include "conf.h"
 #include "global.h"
+#include "event.h"
 
 /* read string in form `!KEY VALUE' to a KeyValue struct. If there is no key
  * specified, it is assumed to be MISC.
@@ -81,16 +83,6 @@ buffer_append_str(char **buffer, const char *string, size_t *capacity)
 		buffer_append(buffer, string[i], capacity);
 }
 
-/* hash a string to an integer, Horner's method copied verbatim from a textbook */
-unsigned int
-hash_str(char *s)
-{
-	unsigned int h = 0;
-	for (int i = 0; i < strlen(s); i++)
-		h = (31 * h + s[i]);
-	return h;
-}
-
 /* exit the program on error, print error to stderr */
 void
 die(const char *s)
@@ -115,4 +107,22 @@ tm_empty()
 	t->tm_isdst = 0;
 
 	return t;
+}
+
+/* get a heap-allocated time (not date) string out of a config and struct tm */
+char *
+tm_tascii(const struct tm *t)
+{
+	char *time = malloc(7);
+	sprintf(time, "%02d:%02d", t->tm_hour, t->tm_min);
+	return time;
+}
+
+/* get a heap-allocated date (not time) string out of a config and struct tm */
+char *
+tm_dascii(const struct tm *t, const Config *c)
+{
+	char *time = malloc(11);
+	sprintf(time, "%02d/%02d/%02d", t->tm_mday, t->tm_mon, t->tm_year);
+	return time;
 }

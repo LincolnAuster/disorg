@@ -4,8 +4,8 @@
 #include <string.h>
 #include <time.h>
 
-#include "global.h"
 #include "conf.h"
+#include "global.h"
 #include "event.h"
 
 /* initialize a new empty Event on 0/0/current year 0:0:0 */
@@ -18,7 +18,7 @@ event_new_empty(const Config *conf)
 	e->misc         = NULL;
 	e->misc_cap     = 0;
 	e->p            = 0;
-	e->time.tm_sec  = tm_empty();
+	e->time         = tm_empty();
 	e->short_disp   = false;
 
 	return e;
@@ -29,11 +29,11 @@ Event *
 event_now(const Config *conf)
 {
 	time_t t = time(NULL);
-	struct tm time = *localtime(&t);
+	struct tm *time = localtime(&t);
 
 	Event *e = event_new_empty(conf);
 	e->title = malloc(10);
-	e->date  = time;
+	e->time  = time;
 	e->short_disp  = true;
 
 	sprintf(e->title, "\033[%smTODAY%s", conf->today_color, RESET_COLOR);
@@ -96,10 +96,9 @@ event_ndisp(const Event *e, const Config *c)
 	
 	printf("\033[%sm", c->pcolors[e->p]);
 
-	printf("%02i:%02i, (%d)\n", e->hour, e->minute, e->p);
-	printf("%02i", e->day);
-	printf("/%02i", e->month);
-	printf("/%02i\n", e->year);
+	printf("%s, (%d)\n", tm_tascii(e->time), e->p);
+
+	printf("%s\n", tm_dascii(e->time, c));
 
 	printf(RESET_COLOR);
 }
@@ -131,8 +130,8 @@ event_insert(Event* e, struct KeyValue *k, const Config *conf)
 		e->description = malloc((strlen(k->val) + 1) * sizeof(char));
 		strcpy(e->description, k->val);
 	} else if (strcmp(k->key, "TIME") == 0) {
-		e->hour   = match_int('H', k->val, conf->time_format);
-		e->minute = match_int('M', k->val, conf->time_format);
+		e->time->tm_hour = match_int('H', k->val, conf->time_format);
+		e->time->tm_min  = match_int('M', k->val, conf->time_format);
 	} else if (strcmp(k->key, "DATE") == 0) {
 		event_insert_date(e, k->val, conf);
 	} else if (strcmp(k->key, "PRIORITY") == 0) {
@@ -147,19 +146,20 @@ void
 event_insert_date(Event *e, const char *date, const Config *conf)
 {
 	int day   = match_int('D', date, conf->date_format);
-	int month = match_int('M', date, conf->date_format);
+	int month = match_int('M', date, conf->date_format) + 1;
 	int year  = match_int('Y', date, conf->date_format);
-	if (day == 0)
-		day = e->day;
-	if (month == 0)
-		month = e->month;
-	if (year == 0)
-		year = e->year;
 
-	if (year < 1000)
+	if (year < 1900)
 		year += 1900;
 	else
 		year -= 1900;
+
+	if (day == 0)
+		day = e->time->tm_mday;
+	if (month == 0)
+		month = e->time->tm_mon;
+	if (year == 0)
+		year = e->time->tm_year;
 
 	e->time->tm_mday  = day;
 	e->time->tm_mon   = month;
