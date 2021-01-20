@@ -122,9 +122,28 @@ tm_tascii(const struct tm *t)
 char *
 tm_dascii(const struct tm *t, const Config *c)
 {
-	char *time = malloc(11);
-	sprintf(time, "%02d/%02d/%02d", t->tm_mday,
-	                                t->tm_mon + 1,
-					t->tm_year + 1900);
+	char  *mday, *mon, *year, *time;
+	int mday_pos, mon_pos, year_pos;
+
+	time = strdup("  /  /    ");
+	mday = malloc(3);
+	mon  = malloc(3);
+	year = malloc(3);
+
+	sprintf(mday, "%02d", t->tm_mday);
+	sprintf(mon,  "%02d", t->tm_mon + 1);
+	sprintf(year, "%02d", t->tm_year);
+
+	mday_pos = 3 * char_location('D', '-', c->date_format);
+	mon_pos  = 3 * char_location('M', '-', c->date_format);
+	year_pos = 3 * char_location('Y', '-', c->date_format);
+
+	strncpy(time + mday_pos, mday, 2);
+	strncpy(time + mon_pos,  mon,  2);
+	strncpy(time + year_pos, year, 2);
+
+	free(mday);
+	free(mon);
+	free(year);
 	return time;
 }
