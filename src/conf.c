@@ -39,14 +39,11 @@ match_int(char location_char, const char *string, const char *format_string)
 
 	for (int i = 0; i < len; i++) {
 		c = format_string[i];
-		if (!is_alphanumeric(format_string[i])) {
+		if (!is_alphanumeric(c))
 			delim = c;
-			if (increment) location++;
-		}
-
-		if (location_char == c)
-			increment = false;
 	}
+
+	location = char_location(location_char, delim, format_string);
         
 	if (delim == '\0')
 		return 0;
@@ -54,7 +51,29 @@ match_int(char location_char, const char *string, const char *format_string)
 	return get_nth(location, delim, string);
 }
 
-int
+/* get location of a character in a format string, relative to delimiter */
+unsigned int
+char_location(char location_char, char delim, const char *format_string)
+{
+	int location, len;
+	char c;
+
+	location = 0;
+	len = strlen(format_string);
+
+	for (int i = 0; i < len; i++) {
+		c = format_string[i];
+		if (c == delim) {
+			location++;
+		} else if (c == location_char) {
+			return location;
+		}
+	}
+
+	return 0;
+}
+
+unsigned int
 get_nth(int location, const char delim, const char *string)
 {
 	char *copy, *copy_a, *token, *delim_str;
