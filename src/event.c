@@ -89,6 +89,10 @@ event_disp(const Event *e, const Config *c)
 void
 event_ndisp(const Event *e, const Config *c)
 {
+	char *time, *date;
+
+	time = tm_tascii(e->time);
+	date = tm_dascii(e->time, c);
 	for (int i = 0; i < CLI_OUTPUT_LEN; i++) printf("-");
 	printf("\n");
 
@@ -97,10 +101,12 @@ event_ndisp(const Event *e, const Config *c)
 	
 	printf("\033[%sm", c->pcolors[e->p]);
 
-	printf("%s, (%d)\n", tm_tascii(e->time), e->p);
+	printf("%s, (%d)\n", time, e->p);
 
-	printf("%s\n", tm_dascii(e->time, c));
+	printf("%s\n", date);
 
+	free(date);
+	free(time);
 	printf(RESET_COLOR);
 }
 
