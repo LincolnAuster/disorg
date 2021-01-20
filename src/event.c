@@ -221,7 +221,7 @@ event_compare_name(Event *a, Event *b)
 
 /* return new empty event tree */
 EventTree *
-eventtree_new()
+eventtree_new(void)
 {
 	EventTree *et = malloc(sizeof(EventTree));
 	et->event = NULL;

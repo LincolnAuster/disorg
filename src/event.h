@@ -40,7 +40,7 @@ void   event_fill_from_text(Event *, FILE *, const Config *);
 int event_compare_time(Event *, Event *);
 int event_compare_name(Event *, Event *);
 
-EventTree *eventtree_new();
+EventTree *eventtree_new(void);
 EventTree *eventtree_insert(EventTree *, Event *, int (*)(Event *, Event *));
 void      *eventtree_free(EventTree *);
 EventTree *eventtree_new_from_event(Event *); 

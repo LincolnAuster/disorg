@@ -25,6 +25,6 @@ unsigned int hash_str(char *);
 
 void die(const char *);
 
-struct tm *tm_empty();
+struct tm *tm_empty(void);
 char *tm_tascii(const struct tm *);
 char *tm_dascii(const struct tm *, const Config *);

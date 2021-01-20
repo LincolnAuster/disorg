@@ -93,7 +93,7 @@ die(const char *s)
 
 /* return an empty tm_struct (i.e., initialized to 0:0 0/0/1900) */
 struct tm *
-tm_empty()
+tm_empty(void)
 {
 	struct tm *t;
 	t = malloc(sizeof(struct tm));
