@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
+
 #include "global.h"
 
 /* read string in form `!KEY VALUE' to a KeyValue struct. If there is no key
@@ -95,4 +97,22 @@ die(const char *s)
 {
 	fprintf(stderr, "%s", s);
 	exit(1);
+}
+
+/* return an empty tm_struct (i.e., initialized to 0:0 0/0/1900) */
+struct tm *
+tm_empty()
+{
+	struct tm *t;
+	t = malloc(sizeof(struct tm));
+	t->tm_sec = 0;
+	t->tm_min = 0;
+	t->tm_hour = 0;
+	t->tm_mday = 1;
+	t->tm_mon  = 0;
+	t->tm_year = 0;
+	t->tm_yday = 0;
+	t->tm_isdst = 0;
+
+	return t;
 }

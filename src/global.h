@@ -24,3 +24,5 @@ void buffer_append_str(char **, const char *, size_t *);
 unsigned int hash_str(char *);
 
 void die(const char *);
+
+struct tm *tm_empty();

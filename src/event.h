@@ -9,12 +9,10 @@ typedef struct {
 	char *description;
 	char *misc;
 	size_t misc_cap;
+
+	struct tm *time;
+
 	int p;
-	unsigned int hour;
-	unsigned int minute;
-	unsigned int day;
-	unsigned int month;
-	unsigned int year;
 	bool short_disp;
 } Event;
 

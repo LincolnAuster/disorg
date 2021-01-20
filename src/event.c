@@ -12,27 +12,14 @@
 Event *    
 event_new_empty(const Config *conf)
 {
-        time_t s = time(NULL);
-        struct tm *lt = localtime(&s);
-        int current_year = lt->tm_year;
- 
-        if (conf_enabled(conf->four_digit_year))
-		current_year += 1900;
-        else
-		current_year -= 100;
-
 	Event *e = malloc(sizeof(Event));
-	e->title       = NULL;
-	e->description = NULL;
-	e->misc        = NULL;
-	e->misc_cap    = 0;
-	e->p           = 0;
-	e->hour        = 0;
-	e->minute      = 0;
-	e->day         = 0;
-	e->month       = 0;
-	e->year        = current_year;
-	e->short_disp  = false;
+	e->title        = NULL;
+	e->description  = NULL;
+	e->misc         = NULL;
+	e->misc_cap     = 0;
+	e->p            = 0;
+	e->time.tm_sec  = tm_empty();
+	e->short_disp   = false;
 
 	return e;
 }
@@ -41,25 +28,15 @@ event_new_empty(const Config *conf)
 Event *
 event_now(const Config *conf)
 {
-        time_t s = time(NULL);
-
-        struct tm *lt = localtime(&s);
-        int current_year  = lt->tm_year;
- 
-        if (conf_enabled(conf->four_digit_year))
-		current_year += 1900;
-        else
-		current_year -= 100;
+	time_t t = time(NULL);
+	struct tm time = *localtime(&t);
 
 	Event *e = event_new_empty(conf);
 	e->title = malloc(10);
-	sprintf(e->title, "\033[%smTODAY%s", conf->today_color, RESET_COLOR);
-	e->hour        = lt->tm_hour;
-	e->minute      = lt->tm_min;
-	e->day         = lt->tm_mday;
-	e->month       = lt->tm_mon + 1;
-	e->year        = current_year;
+	e->date  = time;
 	e->short_disp  = true;
+
+	sprintf(e->title, "\033[%smTODAY%s", conf->today_color, RESET_COLOR);
 
 	return e;
 }
@@ -71,6 +48,7 @@ event_free(Event *e)
 	if (e == NULL) return NULL;
 	if (e->title != NULL)       free(e->title);
 	if (e->description != NULL) free(e->description);
+	if (e->time != NULL)        free(e->time);
 	if (e->misc != NULL)        free(e->misc);
 	free(e);
 	return NULL;
@@ -117,11 +95,12 @@ event_ndisp(const Event *e, const Config *c)
 	printf("%-*sDESCRIPTION\n", CLI_OUTPUT_LEN - 11, e->description);
 	
 	printf("\033[%sm", c->pcolors[e->p]);
+
 	printf("%02i:%02i, (%d)\n", e->hour, e->minute, e->p);
-	
 	printf("%02i", e->day);
 	printf("/%02i", e->month);
 	printf("/%02i\n", e->year);
+
 	printf(RESET_COLOR);
 }
 
@@ -177,14 +156,14 @@ event_insert_date(Event *e, const char *date, const Config *conf)
 	if (year == 0)
 		year = e->year;
 
-	e->day   = day;
-	e->month = month;
-	e->year  = year;
+	if (year < 1000)
+		year += 1900;
+	else
+		year -= 1900;
 
-	if (conf_enabled(conf->four_digit_year)) {
-		e->year = make_four_digits(e->year);
-	} else if (e->year > 2000)
-		e->year -= 2000;
+	e->time->tm_mday  = day;
+	e->time->tm_mon   = month;
+	e->time->tm_year  = year;
 }
 
 /* insert a priority based on the PRIORITY_STR_* macros in global.h */
@@ -222,23 +201,10 @@ event_insert_misc(Event *e, char *text, const Config *conf)
 int
 event_compare_time(Event *a, Event *b)
 {
-	struct tm at, bt;
-	at.tm_year = a->year - 1900;
-	bt.tm_year = b->year - 1900;
-	at.tm_mon  = a->month - 1;
-	bt.tm_mon  = b->month - 1;
-	at.tm_mday = a->day;
-	bt.tm_mday = b->day;
-	at.tm_hour = a->hour;
-	bt.tm_hour = b->hour;
-	at.tm_min  = a->minute;
-	bt.tm_min  = b->minute;
-	at.tm_sec = bt.tm_sec = 0;
-	at.tm_isdst = bt.tm_isdst = 0;
-	time_t att = mktime(&at);
-	time_t btt = mktime(&bt);
+	time_t at = mktime(a->time);
+	time_t bt = mktime(b->time);
 
-	return (int) difftime(att, btt);
+	return (int) difftime(at, bt);
 }
 
 /* strcmp the names of events, for alphabetical sorting */
@@ -261,7 +227,8 @@ eventtree_new()
 
 /* initialize tree node */
 EventTree *
-eventtree_new_from_event(Event *e) {
+eventtree_new_from_event(Event *e)
+{
 	EventTree *et = malloc(sizeof(EventTree));
 	et->event = e;
 	et->left = NULL;
