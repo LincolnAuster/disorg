@@ -146,13 +146,11 @@ void
 event_insert_date(Event *e, const char *date, const Config *conf)
 {
 	int day   = match_int('D', date, conf->date_format);
-	int month = match_int('M', date, conf->date_format) + 1;
+	int month = match_int('M', date, conf->date_format);
 	int year  = match_int('Y', date, conf->date_format);
 
-	if (year < 1900)
-		year += 1900;
-	else
-		year -= 1900;
+	if (year < 2000) year += 2000;
+	year -= 1900;
 
 	if (day == 0)
 		day = e->time->tm_mday;
