@@ -1,15 +1,15 @@
 /* holds global config options, by default read from environment variables in
  * main.c
  */
-typedef struct {
+struct config {
 	const char *date_format;
 	const char *time_format;
-	/* week_start not actually used yet - for future repeating events */
-	const char *week_start;
 	const char *four_digit_year;
 	const char *today_color;
 	const char *pcolors[3];
-} Config;
+	const char *target;
+	bool wiki;
+};
 
 bool conf_enabled(const char *);
 

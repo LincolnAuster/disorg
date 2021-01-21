@@ -120,7 +120,7 @@ tm_tascii(const struct tm *t)
 
 /* get a heap-allocated date (not time) string out of a config and struct tm */
 char *
-tm_dascii(const struct tm *t, const Config *c)
+tm_dascii(const struct tm *t, const struct config *c)
 {
 	char  *mday, *mon, *year, *time;
 	int mday_pos, mon_pos, year_pos;

@@ -10,7 +10,7 @@
 
 /* initialize a new empty Event on 0/0/current year 0:0:0 */
 Event *    
-event_new_empty(const Config *conf)
+event_new_empty(const struct config *conf)
 {
 	Event *e = malloc(sizeof(Event));
 	e->title        = NULL;
@@ -26,7 +26,7 @@ event_new_empty(const Config *conf)
 
 /* initialize event with title Now on current date and time */
 Event *
-event_now(const Config *conf)
+event_now(const struct config *conf)
 {
 	time_t t = time(NULL);
 	struct tm *time = localtime(&t);
@@ -57,7 +57,7 @@ event_free(Event *e)
 
 /* loop through file line-by-line to fill fields of event */
 void
-event_fill_from_text(Event *e, FILE *f, const Config *c)
+event_fill_from_text(Event *e, FILE *f, const struct config *c)
 {
 	struct KeyValue *pair;
 	char   *file_line    = NULL;
@@ -79,7 +79,7 @@ event_fill_from_text(Event *e, FILE *f, const Config *c)
 
 /* write the event to stdout, decide on type of formatting */
 void
-event_disp(const Event *e, const Config *c)
+event_disp(const Event *e, const struct config *c)
 {
 	if (e->short_disp) event_sdisp(e);
 	else               event_ndisp(e, c);
@@ -87,7 +87,7 @@ event_disp(const Event *e, const Config *c)
 
 /* write the event to stdout with some pretty formatting ✨ */
 void
-event_ndisp(const Event *e, const Config *c)
+event_ndisp(const Event *e, const struct config *c)
 {
 	char *time, *date;
 
@@ -120,7 +120,7 @@ event_sdisp(const Event *e)
 
 /* verbose display, display with miscellaneous field */
 void
-event_vdisp(const Event *e, const Config *c) {
+event_vdisp(const Event *e, const struct config *c) {
 	event_disp(e, c);
 	if (e->misc == NULL) return;
 	printf("%s", e->misc);
@@ -128,7 +128,7 @@ event_vdisp(const Event *e, const Config *c) {
 
 /* parse a KeyValue into Event fields */                  
 void
-event_insert(Event* e, struct KeyValue *k, const Config *conf)
+event_insert(Event* e, struct KeyValue *k, const struct config *conf)
 {
 	if (strcmp(k->key, "TITLE") == 0) {
 		e->title = malloc((strlen(k->val) + 1) * sizeof(char));
@@ -150,7 +150,7 @@ event_insert(Event* e, struct KeyValue *k, const Config *conf)
 
 /* insert provided date string into e->date */
 void
-event_insert_date(Event *e, const char *date, const Config *conf)
+event_insert_date(Event *e, const char *date, const struct config *conf)
 {
 	int day   = match_int('D', date, conf->date_format);
 	int month = match_int('M', date, conf->date_format);
@@ -173,7 +173,7 @@ event_insert_date(Event *e, const char *date, const Config *conf)
 
 /* insert a priority based on the PRIORITY_STR_* macros in global.h */
 void
-event_insert_priority(Event *e, char *text, const Config *conf)
+event_insert_priority(Event *e, char *text, const struct config *conf)
 {
 	if (strcmp(text, PRIORITY_STR_HIGH) == 0)
 		e->p = 2;
@@ -185,7 +185,7 @@ event_insert_priority(Event *e, char *text, const Config *conf)
 
 /* insert text into e->misc - set if empty, modify &(e->misc) otherwise */
 void
-event_insert_misc(Event *e, char *text, const Config *conf)
+event_insert_misc(Event *e, char *text, const struct config *conf)
 {
 	char **addr;
 	addr = &(e->misc);
@@ -272,8 +272,8 @@ eventtree_free(EventTree *et)
  * call the specified function on the values.
  */
 void
-eventtree_in_order(EventTree *et, const Config *c,
-		   void (*fun)(const Event *, const Config *))
+eventtree_in_order(EventTree *et, const struct config *c,
+		   void (*fun)(const Event *, const struct config *))
 {
 	if (et == NULL) return;
 	eventtree_in_order(et->right, c, fun);
@@ -285,8 +285,8 @@ eventtree_in_order(EventTree *et, const Config *c,
  * target.
  */
 void
-eventtree_if(EventTree *et, char *t_tgt, const Config *c,
-             void (*fun)(const Event *, const Config *))
+eventtree_if(EventTree *et, const char *t_tgt, const struct config *c,
+             void (*fun)(const Event *, const struct config *))
 {
 	if (et == NULL) return;
 	if (strcmp(et->event->title, t_tgt) == 0) {

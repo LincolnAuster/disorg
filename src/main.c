@@ -8,37 +8,16 @@
 #include "global.h"
 #include "event.h"
 
-struct cargs {
-	char *target;
-	bool wiki;
-};
-
 static struct cargs read_args(int, char **);
 static EventTree *build_tree(EventTree *,
-		      Config *conf,
+		      struct config *conf,
 		      FILE *,
 		      int (*)(Event *, Event *));
-
-static struct cargs
-read_args(int argc, char **argv) {
-	struct cargs c;
-	c.target = NULL;
-	c.wiki = false;
-
-	for (int i = 1; i < argc; i++) {
-		if (strcmp(argv[i], WIKI_ARG) == 0)
-			c.wiki = true;
-		else
-			c.target = argv[i];
-	}
-
-	return c;
-}
 
 /* build an EventTree from paths in a specified file. */
 static EventTree *
 build_tree(EventTree *et_root,
-           Config *conf,
+           struct config *conf,
 	   FILE *from,
 	   int (*comp)(Event *, Event *))
 {
@@ -69,23 +48,25 @@ build_tree(EventTree *et_root,
 int
 main(int argc, char **argv)
 {
-	struct cargs args;
 	EventTree *et_root;
-	Config conf;
+	struct config conf;
 
 	conf.date_format     = getenv("DATE_FORMAT");
 	conf.time_format     = getenv("TIME_FORMAT");
-	conf.week_start      = getenv("WEEK_START");
 	conf.four_digit_year = getenv("FOUR_DIGIT_YEAR");
-	conf.today_color     = getenv("TODAY_COLOR");
-	conf.pcolors[0] = getenv("PLOW_COLOR");
-	conf.pcolors[1] = getenv("PMED_COLOR");
-	conf.pcolors[2] = getenv("PHIGH_COLOR");
 
-	args = read_args(argc, argv);
+	conf.today_color = getenv("TODAY_COLOR");
+	conf.pcolors[0]  = getenv("PLOW_COLOR");
+	conf.pcolors[1]  = getenv("PMED_COLOR");
+	conf.pcolors[2]  = getenv("PHIGH_COLOR");
+
+	conf.target = getenv("TARGET");
+	conf.wiki   = conf_enabled(getenv("WIKI"));
+
+	printf("target: %s\nwiki: %i\n", conf.target, conf.wiki);
 
 	et_root = NULL;
-	if (args.wiki) {
+	if (conf.wiki) {
 		et_root = build_tree(et_root, &conf, stdin, event_compare_name);
 	} else {
 		et_root = build_tree(et_root, &conf, stdin, event_compare_time);
@@ -93,8 +74,8 @@ main(int argc, char **argv)
 		eventtree_insert(et_root, now, event_compare_time);
 	}
 
-	if (args.target != NULL)
-		eventtree_if(et_root, args.target, &conf, event_vdisp);
+	if (conf.target != NULL)
+		eventtree_if(et_root, conf.target, &conf, event_vdisp);
 	else
 		eventtree_in_order(et_root, &conf, event_disp);
 
