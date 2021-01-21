@@ -60,10 +60,8 @@ main(int argc, char **argv)
 	conf.pcolors[1]  = getenv("PMED_COLOR");
 	conf.pcolors[2]  = getenv("PHIGH_COLOR");
 
-	conf.target = getenv("TARGET");
+	conf.target = strcmp(getenv("TARGET"), "") ? getenv("TARGET") : NULL;
 	conf.wiki   = conf_enabled(getenv("WIKI"));
-
-	printf("target: %s\nwiki: %i\n", conf.target, conf.wiki);
 
 	et_root = NULL;
 	if (conf.wiki) {
