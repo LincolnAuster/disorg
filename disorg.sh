@@ -23,14 +23,6 @@ export PHIGH_COLOR
 export PMED_COLOR
 export PLOW_COLOR
 
-# COUNT can be specified to return the number of events, in total, located
-# in the BASE_DIRECTORY. This does _not_ check if the events are valid,
-# just the existance of the file.
-if [[ "$1" == "COUNT" ]]; then
-	find $BASE_DIRECTORY -type f -name "*.ev" | wc -l
-	exit 0
-fi
-
 if [[ "$1" == "--help" ]]; then
 	echo "     Usage: $0 [-W] [COUNT] [target] [--help]"
 	echo "       -w : query wiki files as opposed to event files."
@@ -44,6 +36,15 @@ if [[ "$1" == "--help" ]]; then
 	echo "If no arguments are provided, event files are enumerated."
 fi
 
+# COUNT can be specified to return the number of events, in total, located
+# in the BASE_DIRECTORY. This does _not_ check if the events are valid,
+# just the existance of the file.
+if [[ "$1" == "COUNT" ]]; then
+	find $BASE_DIRECTORY -type f -name "*.ev" | wc -l
+	exit 0
+fi
+
+
 # The W option controls a) the files that are passed to the binary, and b) the
 # order in which the files are sorted on output - wiki files have no associated
 # time, and as such cannot be sorted by that attribute. Instead, they are sorted
@@ -56,7 +57,8 @@ fi
 FILES=$(find $BASE_DIRECTORY -type f -name $PATTERN)
 # Call the main binary: write all files matching args to stdin.
 if [[ "$DEBUG" == "TRUE" ]]; then
-	2> valgrind.log valgrind --leak-check=full $(dirname $0)/disorg-main "$@" <<< $FILES
+	2> valgrind.log valgrind --leak-check=full \
+	   $(dirname $0)/disorg-main "$@" <<< $FILES
 else
-	$(dirname $0)/disorg-main "$@" <<< $FILES
+	$(dirname $0)/disorg-main "$@" <<< "$FILES"
 fi

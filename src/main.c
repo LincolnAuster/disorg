@@ -13,13 +13,13 @@ struct cargs {
 	bool wiki;
 };
 
-struct cargs read_args(int, char **);
-EventTree *build_tree(EventTree *,
+static struct cargs read_args(int, char **);
+static EventTree *build_tree(EventTree *,
 		      Config *conf,
 		      FILE *,
 		      int (*)(Event *, Event *));
 
-struct cargs
+static struct cargs
 read_args(int argc, char **argv) {
 	struct cargs c;
 	c.target = NULL;
@@ -36,7 +36,7 @@ read_args(int argc, char **argv) {
 }
 
 /* build an EventTree from paths in a specified file. */
-EventTree *
+static EventTree *
 build_tree(EventTree *et_root,
            Config *conf,
 	   FILE *from,
