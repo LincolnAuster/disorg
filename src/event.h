@@ -1,11 +1,7 @@
-typedef enum {
-	low,
-	med,
-	high,
-} Priority;
 /* opaque struct to contain data for a .ev */
 typedef struct {
 	char *title;
+	char *cat;
 	char *description;
 	char *misc;
 	size_t misc_cap;
@@ -32,6 +28,7 @@ void   event_vdisp(const Event *, const struct config *);
 void   event_sdisp(const Event *);
 
 void   event_insert(Event *, struct KeyValue *, const struct config *);
+void   event_insert_category(Event *, const char *);
 void   event_insert_date(Event *, const char *, const struct config *);
 void   event_insert_misc(Event *, char *, const struct config *);
 void   event_insert_priority(Event *, char *, const struct config *);

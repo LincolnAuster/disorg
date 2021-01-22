@@ -8,7 +8,6 @@
 #include "global.h"
 #include "event.h"
 
-static struct cargs read_args(int, char **);
 static EventTree *build_tree(EventTree *,
 		      struct config *conf,
 		      FILE *,

@@ -14,6 +14,7 @@ event_new_empty(const struct config *conf)
 {
 	Event *e = malloc(sizeof(Event));
 	e->title        = NULL;
+	e->cat          = NULL;
 	e->description  = NULL;
 	e->misc         = NULL;
 	e->misc_cap     = 0;
@@ -48,6 +49,7 @@ event_free(Event *e)
 {
 	if (e == NULL) return NULL;
 	if (e->title != NULL)       free(e->title);
+	if (e->cat   != NULL)       free(e->cat);
 	if (e->description != NULL) free(e->description);
 	if (e->time != NULL)        free(e->time);
 	if (e->misc != NULL)        free(e->misc);
@@ -169,6 +171,14 @@ event_insert_date(Event *e, const char *date, const struct config *conf)
 	e->time->tm_mday  = day;
 	e->time->tm_mon   = --month;
 	e->time->tm_year  = year;
+}
+
+/* insert category, free buffer if not NULL */
+void
+event_insert_category(Event *e, const char *p)
+{
+	if (e->cat == NULL) free(e->cat);
+	e->cat = strdup(p);
 }
 
 /* insert a priority based on the PRIORITY_STR_* macros in global.h */

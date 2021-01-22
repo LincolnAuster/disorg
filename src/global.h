@@ -21,7 +21,6 @@ struct KeyValue *key_value_read(const char *);
 
 void buffer_append(char **, const char, size_t *);
 void buffer_append_str(char **, const char *, size_t *);
-unsigned int hash_str(char *);
 
 void die(const char *);
 
