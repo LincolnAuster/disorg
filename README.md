@@ -2,39 +2,15 @@
 <p align="center">disorganized program inpsired by emacs' org-mode<br/>a tool to maintain a schedule and agenda over a directory of plain-text files</p>
 
 ## Usage
-`disorg` aggregates an agenda based off of events (plain text .ev files) located in a base directory (by default `~/.disorg`). When `disorg.sh` (not `disorg-main`) is run with no arguments, it displays an agenda, an ordered list containing overviews of all events in the base directory. The current date is marked relative to the events, i.e.:
-```
---------------------------------------------------------------------------------
-TODAY
---------------------------------------------------------------------------------
-OCS25 Readings                                                             TITLE
-Undirected graphs                                                    DESCRIPTION
-00:00
-18/01/2021
---------------------------------------------------------------------------------
-German Lesson Backup Platform                                              TITLE
-(null)                                                               DESCRIPTION
-23:59
-18/01/2021
---------------------------------------------------------------------------------
-German Readings                                                            TITLE
-Assignments 3 and 4                                                  DESCRIPTION
-00:00
-19/01/2021
---------------------------------------------------------------------------------
-Schedule TAA Presentation                                                  TITLE
-(null)                                                               DESCRIPTION
-00:00
-20/01/2021
---------------------------------------------------------------------------------
-TAA Readings                                                               TITLE
-(null)                                                               DESCRIPTION
-00:00
-01/20/2021
-```
+`disorg` aggregates an agenda based off of events (plain text .ev files) located in a base directory (by default `~/.disorg`). When `disorg.sh` (not `disorg-main`) is run with no arguments, it displays the agenda, an ordered list containing overviews of all events in the base directory.
+
+![screenshot](screenshot.png)
+
 The `-W` flag can be passed to list wiki files (.wi plain text files) similarly in alphabetical order.
 
 For a detailed view of one item (wiki or event), the name can be passed to the script (as a single argument: `"OCS25 Readings"` over `OCS25 Readings`).
+
+Every event and wiki has a category determined by its parent directory. To filter by category, `-C "category"` can be passed.
 
 Adding, moving, deleting, or otherwise modifying events is not done through this program, it should be done through a text editor.
 
