@@ -84,5 +84,7 @@ main(int argc, char **argv)
 		eventtree_in_order(et_root, &conf, event_disp);
 
 	et_root = eventtree_free(et_root);
+	if (conf.target != NULL) free(conf.target);
+	if (conf.tarcat != NULL) free(conf.tarcat);
 	return 0;
 }

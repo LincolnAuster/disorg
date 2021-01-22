@@ -8,8 +8,8 @@ struct config {
 	const char *today_color;
 	const char *pcolors[3];
 	unsigned int *cat_colors;
-	const char *target;
-	const char *tarcat;
+	char *target;
+	char *tarcat;
 	bool wiki;
 };
 
