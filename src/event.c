@@ -100,6 +100,7 @@ event_ndisp(const Event *e, const struct config *c)
 
 	printf("%-*sTITLE\n", CLI_OUTPUT_LEN - 5, e->title);
 	printf("%-*sDESCRIPTION\n", CLI_OUTPUT_LEN - 11, e->description);
+	printf("%-*sCATEGORY\n", CLI_OUTPUT_LEN - 8, e->cat);
 	
 	printf("\033[%sm", c->pcolors[e->p]);
 
