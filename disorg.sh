@@ -80,7 +80,7 @@ export WIKI
 FILES=$(find $BASE_DIRECTORY -type f -name $PATTERN)
 # Call the main binary: write all files matching args to stdin.
 if [[ "$DEBUG" == "TRUE" ]]; then
-	2> valgrind.log valgrind --leak-check=full \
+	time 2> valgrind.log valgrind --leak-check=full \
 	   $(dirname $0)/disorg-main "$@" <<< $FILES
 else
 	$(dirname $0)/disorg-main "$@" <<< "$FILES"

@@ -34,6 +34,7 @@ build_tree(EventTree *et_root,
 		if (event_file == NULL) continue;
 
 		Event* e = event_new_empty(conf);
+		event_insert_category(e, parent_dir(path_l));
 		event_fill_from_text(e, event_file, conf);
 
 		et_root = eventtree_insert(et_root, e, comp);

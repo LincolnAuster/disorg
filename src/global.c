@@ -83,6 +83,32 @@ buffer_append_str(char **buffer, const char *string, size_t *capacity)
 		buffer_append(buffer, string[i], capacity);
 }
 
+/* find the parent dir given a / delimited filename - string returned 
+ * is dynamically allocated */
+char *
+parent_dir(const char *p)
+{
+	char *buf;
+	size_t start, end, len;
+	start = end = 0;
+
+	for (size_t i = strlen(p); i > 0; i--) {
+		if (p[i] != '/') continue;
+		if (end == 0) {
+			end = i;
+		} else if (start == 0) {
+			start = ++i; break;
+		}
+	}
+
+	len = end - start;
+	buf = malloc(len + 1);
+	strncpy(buf, p + start, len);
+	buf[len] = '\0';
+
+	return buf;
+}
+
 /* exit the program on error, print error to stderr */
 void
 die(const char *s)
