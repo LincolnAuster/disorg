@@ -36,7 +36,7 @@ PATTERN="*.ev"
 # order in which the files are sorted on output - wiki files have no associated
 # time, and as such cannot be sorted by that attribute. Instead, they are sorted
 # alphabetically.
-if [[ "$*" == *"-W"* ]]; then
+if [[ "$@" == *"-W"* ]]; then
 	PATTERN="*.wi"
 fi
 
@@ -59,6 +59,7 @@ export PLOW_COLOR
 
 # disorg-main CLI args
 TARGET=""
+CATEGORY=""
 WIKI="FALSE"
 
 # assume that target is the last non option argument (doesn't begin with -)
@@ -74,6 +75,15 @@ if [[ "$PATTERN" == "*.wi" ]]; then
 	WIKI="TRUE"
 fi
 
+# If the -C option is specified, limit the BASE_DIRECTORY to that subdirectory.
+for ((i = 1 ; i < $# ; i++ )); do
+	if [[ "${!i}" == "-C" ]]; then
+		i=$(($i + 1))
+		CATEGORY="${!i}"
+	fi
+done
+
+export CATEGORY
 export TARGET
 export WIKI
 

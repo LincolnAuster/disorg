@@ -62,8 +62,10 @@ main(int argc, char **argv)
 	conf.pcolors[1]  = getenv("PMED_COLOR");
 	conf.pcolors[2]  = getenv("PHIGH_COLOR");
 
-	conf.target = strcmp(getenv("TARGET"), "") ? getenv("TARGET") : NULL;
-	conf.wiki   = conf_enabled(getenv("WIKI"));
+	conf.target = strdup(getenv("TARGET"));
+	conf.tarcat = strdup(getenv("CATEGORY"));
+
+	conf.wiki = conf_enabled(getenv("WIKI"));
 
 	et_root = NULL;
 	if (conf.wiki) {
@@ -74,7 +76,9 @@ main(int argc, char **argv)
 		eventtree_insert(et_root, now, event_compare_time);
 	}
 
-	if (conf.target != NULL)
+	if (strlen(conf.tarcat) > 0)
+		eventtree_if_cat(et_root, conf.tarcat, &conf, event_vdisp);
+	else if (strlen(conf.target) > 0)
 		eventtree_if(et_root, conf.target, &conf, event_vdisp);
 	else
 		eventtree_in_order(et_root, &conf, event_disp);

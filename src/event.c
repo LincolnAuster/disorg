@@ -308,3 +308,20 @@ eventtree_if(EventTree *et, const char *t_tgt, const struct config *c,
 	eventtree_if(et->left, t_tgt, c, fun);
 	eventtree_if(et->right, t_tgt, c, fun);
 }
+
+/* Traverse the tree, call specified function if category matches provided
+ * target.
+ */
+void
+eventtree_if_cat(EventTree *et, const char *t_tgt, const struct config *c,
+             void (*fun)(const Event *, const struct config *))
+{
+	if (et == NULL) return;
+	if (strcmp(et->event->cat, t_tgt) == 0) {
+		fun(et->event, c);
+		return;
+	}
+
+	eventtree_if_cat(et->left, t_tgt, c, fun);
+	eventtree_if_cat(et->right, t_tgt, c, fun);
+}
