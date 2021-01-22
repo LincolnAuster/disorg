@@ -83,6 +83,16 @@ buffer_append_str(char **buffer, const char *string, size_t *capacity)
 		buffer_append(buffer, string[i], capacity);
 }
 
+/* Procedurally acquire a color for a given string */
+unsigned int
+buftocol(const char *s)
+{
+	unsigned int c = 0;
+	for (int i = 0; i < strlen(s); i++)
+		c += s[i];
+	return c % 256;
+}
+
 /* find the parent dir given a / delimited filename - string returned 
  * is dynamically allocated */
 char *
@@ -107,14 +117,6 @@ parent_dir(const char *p)
 	buf[len] = '\0';
 
 	return buf;
-}
-
-/* exit the program on error, print error to stderr */
-void
-die(const char *s)
-{
-	fprintf(stderr, "%s", s);
-	exit(1);
 }
 
 /* return an empty tm_struct (i.e., initialized to 0:0 0/0/1900) */

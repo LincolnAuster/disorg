@@ -83,7 +83,7 @@ event_fill_from_text(Event *e, FILE *f, const struct config *c)
 void
 event_disp(const Event *e, const struct config *c)
 {
-	if (e->short_disp) event_sdisp(e);
+	if (e->short_disp || c->wiki) event_sdisp(e);
 	else               event_ndisp(e, c);
 }
 
@@ -95,6 +95,9 @@ event_ndisp(const Event *e, const struct config *c)
 
 	time = tm_tascii(e->time);
 	date = tm_dascii(e->time, c);
+
+	if (e->cat != NULL)
+		printf("\033[38;5;%dm", buftocol(e->cat));
 	for (int i = 0; i < CLI_OUTPUT_LEN; i++) printf("-");
 	printf("\n");
 
@@ -117,8 +120,12 @@ event_ndisp(const Event *e, const struct config *c)
 void
 event_sdisp(const Event *e)
 {
+	if (e->cat != NULL)
+		printf("\033[38;5;%dm", buftocol(e->cat));
 	for (int i = 0; i < CLI_OUTPUT_LEN; i++) printf("-");
-	printf("\n%s\n", e->title);
+	printf("\n%s", e->title);
+	if (e->cat != NULL) printf(" (%s)", e->cat);
+	printf("%s\n", RESET_COLOR);
 }
 
 /* verbose display, display with miscellaneous field */

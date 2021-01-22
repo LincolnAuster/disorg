@@ -7,6 +7,7 @@ struct config {
 	const char *four_digit_year;
 	const char *today_color;
 	const char *pcolors[3];
+	unsigned int *cat_colors;
 	const char *target;
 	const char *tarcat;
 	bool wiki;
