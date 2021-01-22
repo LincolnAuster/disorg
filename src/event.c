@@ -98,10 +98,16 @@ event_ndisp(const Event *e, const struct config *c)
 
 	if (e->cat != NULL)
 		printf("\033[38;5;%dm", buftocol(e->cat));
-	for (int i = 0; i < CLI_OUTPUT_LEN; i++) printf("-");
-	printf("\n");
 
+	for (int i = 0; i < CLI_OUTPUT_LEN; i++) printf("-");
+
+	/* bold title */
+	printf("\n\033[1m");
 	printf("%-*sTITLE\n", CLI_OUTPUT_LEN - 5, e->title);
+	printf(RESET_COLOR);
+	if (e->cat != NULL)
+		printf("\033[38;5;%dm", buftocol(e->cat));
+
 	printf("%-*sDESCRIPTION\n", CLI_OUTPUT_LEN - 11, e->description);
 	printf("%-*sCATEGORY\n", CLI_OUTPUT_LEN - 8, e->cat);
 	

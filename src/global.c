@@ -90,7 +90,8 @@ buftocol(const char *s)
 	unsigned int c = 0;
 	for (int i = 0; i < strlen(s); i++)
 		c += s[i];
-	return c % 256;
+	/* limit to 16 colors to preserve terminal themeing */
+	return 1 + c % 14;
 }
 
 /* find the parent dir given a / delimited filename - string returned 

@@ -50,8 +50,6 @@ PHIGH_COLOR='31'
 PMED_COLOR='35'
 PLOW_COLOR='0'
 
-CATEGORY_COLORS="13 14 15 61 73 214"
-
 source ~/.config/disorg/disorg 2> /dev/null
 export FOUR_DIGIT_YEAR
 export DATE_FORMAT
