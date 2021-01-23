@@ -90,7 +90,6 @@ export CATEGORY
 export TARGET
 export WIKI
 
-echo $PATTERN
 FILES=$(find "$BASE_DIRECTORY" -type f -name "$PATTERN")
 # Call the main binary: write all files matching args to stdin.
 if [[ "$DEBUG" == "TRUE" ]]; then
