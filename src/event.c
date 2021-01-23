@@ -236,9 +236,9 @@ event_compare_time(Event *a, Event *b)
 	return (int) difftime(at, bt);
 }
 
-/* strcmp the names of events, for alphabetical sorting */
+/* compare the events alphabetically, by category and then by name */
 int
-event_compare_name(Event *a, Event *b)
+event_compare_alpha(Event *a, Event *b)
 {
 	int cat = strcmp(b->cat, a->cat);
 	if (cat == 0)

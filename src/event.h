@@ -35,7 +35,7 @@ void   event_insert_priority(Event *, char *, const struct config *);
 void   event_fill_from_text(Event *, FILE *, const struct config *);
 
 int event_compare_time(Event *, Event *);
-int event_compare_name(Event *, Event *);
+int event_compare_alpha(Event *, Event *);
 
 EventTree *eventtree_new(void);
 EventTree *eventtree_insert(EventTree *, Event *, int (*)(Event *, Event *));

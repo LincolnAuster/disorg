@@ -14,14 +14,6 @@ if [[ "$1" == "--help" ]]; then
 	exit 0
 fi
 
-# COUNT can be specified to return the number of events, in total, located
-# in the BASE_DIRECTORY. This does _not_ check if the events are valid,
-# just the existance of the file.
-if [[ "$1" == "COUNT" ]]; then
-	echo "COUNT: $(find $BASE_DIRECTORY -type f -name "*.ev" | wc -l)"
-	exit 0
-fi
-
 # main.c loads config from environment variables, so defaults are set and the
 # config is loaded in (the redirection to /dev/null prevents an error message
 # if the config file doesn't exist. DEBUG is not loaded by main.c; if enabled
@@ -31,6 +23,14 @@ fi
 BASE_DIRECTORY="$HOME/.disorg"
 DEBUG="FALSE"
 PATTERN="*.ev"
+
+# COUNT can be specified to return the number of events, in total, located
+# in the BASE_DIRECTORY. This does _not_ check if the events are valid,
+# just the existance of the file.
+if [[ "$1" == "COUNT" ]]; then
+	echo "COUNT: $(find $BASE_DIRECTORY -type f -name "*.ev" | wc -l)"
+	exit 0
+fi
 
 # The W option controls a) the files that are passed to the binary, and b) the
 # order in which the files are sorted on output - wiki files have no associated
