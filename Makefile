@@ -1,6 +1,6 @@
 all:
 	gcc src/main.c src/conf.c src/event.c src/global.c \
-		-o disorg-main -pedantic -g
+		-o disorg-main -pedantic -Wall -g
 release:
 	gcc src/main.c src/event.c src/conf.c src/global.c \
 		-o disorg-main

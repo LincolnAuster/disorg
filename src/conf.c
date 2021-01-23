@@ -70,7 +70,7 @@ first_nonalpha(const char *s)
 		if (!is_alphanumeric(c))
 			return c;
 	}
-
+	return '\0';
 }
 
 unsigned int
@@ -81,7 +81,6 @@ get_nth(int location, const char delim, const char *string)
 
 	token = NULL;
 	// delim_str = malloc(2 * sizeof(char));
-	delim_str[2];
 	delim_str[0] = delim;
 	delim_str[1] = '\0';
 

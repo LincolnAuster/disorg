@@ -35,7 +35,6 @@ event_now(const struct config *conf)
 	Event *e = event_new_empty(conf);
 	e->title = malloc(10);
 	*(e->time) = *time;
-	e->time->tm_mon;
 	e->short_disp  = true;
 
 	sprintf(e->title, "\033[%smTODAY%s", conf->today_color, RESET_COLOR);
