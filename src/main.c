@@ -69,7 +69,7 @@ main(int argc, char **argv)
 
 	et_root = NULL;
 	if (conf.wiki) {
-		et_root = build_tree(et_root, &conf, stdin, event_compare_name);
+		et_root = build_tree(et_root, &conf, stdin, event_compare_alpha);
 	} else {
 		et_root = build_tree(et_root, &conf, stdin, event_compare_time);
 		Event *now = event_now(&conf);
