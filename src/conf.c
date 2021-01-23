@@ -58,6 +58,8 @@ char_location(char location_char, char delim, const char *format_string)
 	int location, len;
 	char c;
 
+	if (delim == '\0') delim = first_nonalpha(format_string);
+
 	location = 0;
 	len = strlen(format_string);
 
@@ -71,6 +73,20 @@ char_location(char location_char, char delim, const char *format_string)
 	}
 
 	return 0;
+}
+
+/* returns the first non-alphanumeric char */
+char
+first_nonalpha(const char *s)
+{
+	char c;
+	size_t len = strlen(s);
+	for (int i = 0; i < len; i++) {
+		c = s[i];
+		if (!is_alphanumeric(c))
+			return c;
+	}
+
 }
 
 unsigned int

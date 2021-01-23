@@ -17,6 +17,7 @@ bool conf_enabled(const char *);
 
 unsigned int match_int(char, const char *, const char *);
 unsigned int char_location(char, char, const char *);
+char first_nonalpha(const char *);
 unsigned int get_nth(int, char, const char *);
 
 int  make_four_digits(int);

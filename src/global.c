@@ -163,9 +163,9 @@ tm_dascii(const struct tm *t, const struct config *c)
 	sprintf(mon,  "%02d", t->tm_mon + 1);
 	sprintf(year, "%02d", t->tm_year);
 
-	mday_pos = 3 * char_location('D', '-', c->date_format);
-	mon_pos  = 3 * char_location('M', '-', c->date_format);
-	year_pos = 3 * char_location('Y', '-', c->date_format);
+	mday_pos = 3 * char_location('D', '\0', c->date_format);
+	mon_pos  = 3 * char_location('M', '\0', c->date_format);
+	year_pos = 3 * char_location('Y', '\0', c->date_format);
 
 	strncpy(time + mday_pos, mday, 2);
 	strncpy(time + mon_pos,  mon,  2);
