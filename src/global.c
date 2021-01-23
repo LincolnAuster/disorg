@@ -151,28 +151,32 @@ tm_tascii(const struct tm *t)
 char *
 tm_dascii(const struct tm *t, const struct config *c)
 {
-	char  *mday, *mon, *year, *time;
+	char  *mday, *mon, *year, *date;
 	int mday_pos, mon_pos, year_pos;
+	char delim;
 
-	time = strdup("  /  /    ");
+	delim = first_nonalpha(c->date_format);
+	date = malloc(11);
 	mday = malloc(3);
 	mon  = malloc(3);
 	year = malloc(3);
+
+	sprintf(date, "  %c  %c    ", delim, delim);
 
 	sprintf(mday, "%02d", t->tm_mday);
 	sprintf(mon,  "%02d", t->tm_mon + 1);
 	sprintf(year, "%02d", t->tm_year);
 
-	mday_pos = 3 * char_location('D', '\0', c->date_format);
-	mon_pos  = 3 * char_location('M', '\0', c->date_format);
-	year_pos = 3 * char_location('Y', '\0', c->date_format);
+	mday_pos = 3 * char_location('D', delim, c->date_format);
+	mon_pos  = 3 * char_location('M', delim, c->date_format);
+	year_pos = 3 * char_location('Y', delim, c->date_format);
 
-	strncpy(time + mday_pos, mday, 2);
-	strncpy(time + mon_pos,  mon,  2);
-	strncpy(time + year_pos, year, 2);
+	strncpy(date + mday_pos, mday, 2);
+	strncpy(date + mon_pos,  mon,  2);
+	strncpy(date + year_pos, year, 2);
 
 	free(mday);
 	free(mon);
 	free(year);
-	return time;
+	return date;
 }
