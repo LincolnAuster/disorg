@@ -22,7 +22,7 @@ fi
 # disorg.sh options
 BASE_DIRECTORY="$HOME/.disorg"
 DEBUG="FALSE"
-PATTERN="*.ev"
+PATTERN='*.ev'
 
 # COUNT can be specified to return the number of events, in total, located
 # in the BASE_DIRECTORY. This does _not_ check if the events are valid,
@@ -37,8 +37,9 @@ fi
 # time, and as such cannot be sorted by that attribute. Instead, they are sorted
 # alphabetically.
 if [[ "$@" == *"-W"* ]]; then
-	PATTERN="*.wi"
+	PATTERN='*.wi'
 fi
+
 
 # disorg-main config file options
 DATE_FORMAT="D-M-Y"
@@ -89,7 +90,8 @@ export CATEGORY
 export TARGET
 export WIKI
 
-FILES=$(find $BASE_DIRECTORY -type f -name $PATTERN)
+echo $PATTERN
+FILES=$(find "$BASE_DIRECTORY" -type f -name "$PATTERN")
 # Call the main binary: write all files matching args to stdin.
 if [[ "$DEBUG" == "TRUE" ]]; then
 	time 2> valgrind.log valgrind --leak-check=full \
