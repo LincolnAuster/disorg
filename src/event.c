@@ -5,7 +5,7 @@
 #include <time.h>
 
 #include "conf.h"
-#include "global.h"
+#include "util.h"
 #include "event.h"
 
 /* initialize a new empty Event on 0/0/current year 0:0:0 */
@@ -25,7 +25,7 @@ event_new_empty(const struct config *conf)
 	return e;
 }
 
-/* initialize event with title Now on current date and time */
+/* initialize event with title TODAY on current date and time */
 Event *
 event_now(const struct config *conf)
 {

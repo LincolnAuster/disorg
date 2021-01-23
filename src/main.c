@@ -5,7 +5,7 @@
 #include <time.h>
 
 #include "conf.h"
-#include "global.h"
+#include "util.h"
 #include "event.h"
 
 static EventTree *build_tree(EventTree *,

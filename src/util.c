@@ -5,7 +5,7 @@
 #include <time.h>
 
 #include "conf.h"
-#include "global.h"
+#include "util.h"
 #include "event.h"
 
 /* read string in form `!KEY VALUE' to a KeyValue struct. If there is no key
