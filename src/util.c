@@ -187,27 +187,27 @@ tm_dascii(const struct tm *t, const struct config *c)
 
 /* print a string, wrapping lines at word breaks */
 void
-print_long(const char *s, int maxlen)
+print_long(const char *s, size_t maxlen)
 {
+	if (strlen(s) < maxlen) {
+		printf("%s\n", s);
+		return;
+	}
+
 	int pos, len;
 	pos = 0;
 	while (pos < strlen(s)) {
 		len = maxlen;
-		for (int i = maxlen; i > 0; i--) {
-			if (s[pos + i] == '\n') {
+		for (size_t i = 0; i < maxlen; i++) {
+			char c = s[pos + i];
+			if (c == '\n') {
 				len = i;
 				break;
-			}
-		}
-		if (len == maxlen) {
-			for (int i = maxlen; i > 0; i--) {
-				if (s[pos + i] == ' ') {
-					len = i;
-					break;
-				}
+			} else if (c == ' ') {
+				len = i;
 			}
 		}
 		printf("%.*s\n", len, s + pos);
-		pos += len + 1;
+		pos += ++len;
 	}
 }

@@ -31,4 +31,4 @@ struct tm *tm_empty(void);
 char *tm_tascii(const struct tm *);
 char *tm_dascii(const struct tm *, const struct config *);
 
-void print_long(const char *, int);
+void print_long(const char *, size_t);
