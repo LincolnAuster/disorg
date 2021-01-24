@@ -1,7 +1,4 @@
-#define CLI_OUTPUT_LEN 80
-/* these numbers are all random guesses - i've tested nothing */
 #define INITIAL_BUFFER_SIZE 12
-#define HASH_SIZE           16
 
 #define EVENT_EXT ".ev"
 #define WIKI_EXT  ".wi"

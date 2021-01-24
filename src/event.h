@@ -25,7 +25,7 @@ Event *event_free(Event *);
 void   event_disp(const Event *, const struct config *);
 void   event_ndisp(const Event *, const struct config *);
 void   event_vdisp(const Event *, const struct config *);
-void   event_sdisp(const Event *);
+void   event_sdisp(const Event *, const struct config *);
 
 void   event_insert(Event *, struct KeyValue *, const struct config *);
 void   event_insert_category(Event *, const char *);

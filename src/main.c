@@ -62,6 +62,11 @@ main(int argc, char **argv)
 	conf.pcolors[1]  = getenv("PMED_COLOR");
 	conf.pcolors[2]  = getenv("PHIGH_COLOR");
 
+	if (!getenv("COL_WIDTH"))
+		conf.col_width = 80;
+	else
+		conf.col_width = atoi(getenv("COL_WIDTH"));
+
 	conf.target = strdup(getenv("TARGET"));
 	conf.tarcat = strdup(getenv("CATEGORY"));
 
@@ -69,9 +74,11 @@ main(int argc, char **argv)
 
 	et_root = NULL;
 	if (conf.wiki) {
-		et_root = build_tree(et_root, &conf, stdin, event_compare_alpha);
+		et_root = build_tree(et_root, &conf, stdin,
+				     event_compare_alpha);
 	} else {
-		et_root = build_tree(et_root, &conf, stdin, event_compare_time);
+		et_root = build_tree(et_root, &conf, stdin,
+				     event_compare_time);
 		Event *now = event_now(&conf);
 		eventtree_insert(et_root, now, event_compare_time);
 	}

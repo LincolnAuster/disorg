@@ -90,6 +90,10 @@ export CATEGORY
 export TARGET
 export WIKI
 
+# get any parameters from the environment or external tools
+COL_WIDTH=$(tput cols)
+export COL_WIDTH
+
 FILES=$(find "$BASE_DIRECTORY" -type f -name "$PATTERN")
 # Call the main binary: write all files matching args to stdin.
 if [[ "$DEBUG" == "TRUE" ]]; then

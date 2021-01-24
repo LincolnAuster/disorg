@@ -82,7 +82,7 @@ event_fill_from_text(Event *e, FILE *f, const struct config *c)
 void
 event_disp(const Event *e, const struct config *c)
 {
-	if (e->short_disp || c->wiki) event_sdisp(e);
+	if (e->short_disp || c->wiki) event_sdisp(e, c);
 	else               event_ndisp(e, c);
 }
 
@@ -98,17 +98,17 @@ event_ndisp(const Event *e, const struct config *c)
 	if (e->cat != NULL)
 		printf("\033[38;5;%dm", buftocol(e->cat));
 
-	for (int i = 0; i < CLI_OUTPUT_LEN; i++) printf("-");
+	for (int i = 0; i < c->col_width; i++) printf("-");
 
 	/* bold title */
 	printf("\n\033[1m");
-	printf("%-*sTITLE\n", CLI_OUTPUT_LEN - 5, e->title);
+	printf("%-*sTITLE\n", c->col_width - 5, e->title);
 	printf(RESET_COLOR);
 	if (e->cat != NULL)
 		printf("\033[38;5;%dm", buftocol(e->cat));
 
-	printf("%-*sDESCRIPTION\n", CLI_OUTPUT_LEN - 11, e->description);
-	printf("%-*sCATEGORY\n", CLI_OUTPUT_LEN - 8, e->cat);
+	printf("%-*sDESCRIPTION\n", c->col_width - 11, e->description);
+	printf("%-*sCATEGORY\n", c->col_width - 8, e->cat);
 	
 	printf("\033[%sm", c->pcolors[e->p]);
 
@@ -123,11 +123,11 @@ event_ndisp(const Event *e, const struct config *c)
 
 /* display an event, but only on two lines (i.e., TODAY event) */
 void
-event_sdisp(const Event *e)
+event_sdisp(const Event *e, const struct config *c)
 {
 	if (e->cat != NULL)
 		printf("\033[38;5;%dm", buftocol(e->cat));
-	for (int i = 0; i < CLI_OUTPUT_LEN; i++) printf("-");
+	for (int i = 0; i < c->col_width; i++) printf("-");
 	printf("\n%s", e->title);
 	if (e->cat != NULL) printf(" (%s)", e->cat);
 	printf("%s\n", RESET_COLOR);
@@ -138,7 +138,7 @@ void
 event_vdisp(const Event *e, const struct config *c) {
 	event_disp(e, c);
 	if (e->misc == NULL) return;
-	print_long(e->misc, CLI_OUTPUT_LEN);
+	print_long(e->misc, c->col_width);
 }
 
 /* parse a KeyValue into Event fields */                  
