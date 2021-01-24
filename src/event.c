@@ -138,7 +138,7 @@ void
 event_vdisp(const Event *e, const struct config *c) {
 	event_disp(e, c);
 	if (e->misc == NULL) return;
-	printf("%s", e->misc);
+	print_long(e->misc, CLI_OUTPUT_LEN);
 }
 
 /* parse a KeyValue into Event fields */                  

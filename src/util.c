@@ -184,3 +184,30 @@ tm_dascii(const struct tm *t, const struct config *c)
 	free(year);
 	return date;
 }
+
+/* print a string, wrapping lines at word breaks */
+void
+print_long(const char *s, int maxlen)
+{
+	int pos, len;
+	pos = 0;
+	while (pos < strlen(s)) {
+		len = maxlen;
+		for (int i = maxlen; i > 0; i--) {
+			if (s[pos + i] == '\n') {
+				len = i;
+				break;
+			}
+		}
+		if (len == maxlen) {
+			for (int i = maxlen; i > 0; i--) {
+				if (s[pos + i] == ' ') {
+					len = i;
+					break;
+				}
+			}
+		}
+		printf("%.*s\n", len, s + pos);
+		pos += len + 1;
+	}
+}
