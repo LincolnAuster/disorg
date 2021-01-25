@@ -9,6 +9,8 @@
 #define PRIORITY_STR_MID  "MED"
 #define PRIORITY_STR_LOW  "LOW"
 
+#define KEY_VALUE_CMP(a, b) (strcmp(a.key, b.key) + strcmp(a.val, b.val))
+
 struct KeyValue {
 	char *key;
 	char *val;
