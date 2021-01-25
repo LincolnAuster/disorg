@@ -43,7 +43,10 @@ void      *eventtree_free(EventTree *);
 EventTree *eventtree_new_from_event(Event *); 
 void       eventtree_in_order(EventTree *, const struct config *,
 		              void (*)(const Event *, const struct config *));
-void       eventtree_if(EventTree *, const char *, const struct config *,
-		              void (*)(const Event *, const struct config *));
-void       eventtree_if_cat(EventTree *, const char *, const struct config *,
-		              void (*)(const Event *, const struct config *));
+
+void eventtree_if(EventTree *, const struct config *,
+		  int (*)(const Event *, const struct config *),
+		  void (*)(const Event *, const struct config *));
+
+int cat_cmp(const Event *, const struct config *);
+int tar_cmp(const Event *, const struct config *);

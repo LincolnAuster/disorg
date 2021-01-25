@@ -308,36 +308,29 @@ eventtree_in_order(EventTree *et, const struct config *c,
 	eventtree_in_order(et->left, c, fun);
 }
 
-/* Traverse the tree, call specified function if title matches provided
- * target.
+/* perform function act on an event in the tree IFF cmp(et->event, c) returns
+ * 0. Used to compare an event with config options.
  */
 void
-eventtree_if(EventTree *et, const char *t_tgt, const struct config *c,
-             void (*fun)(const Event *, const struct config *))
+eventtree_if(EventTree *et, const struct config *c,
+             int (*cmp)(const Event *, const struct config *),
+             void (*act)(const Event *, const struct config *))
 {
 	if (et == NULL) return;
-	if (strcmp(et->event->title, t_tgt) == 0) {
-		fun(et->event, c);
-		return;
-	}
-
-	eventtree_if(et->left, t_tgt, c, fun);
-	eventtree_if(et->right, t_tgt, c, fun);
+	eventtree_if(et->left, c, cmp, act);
+	if (cmp(et->event, c) == 0) act(et->event, c);
+	eventtree_if(et->right, c, cmp, act);
 }
 
-/* Traverse the tree, call specified function if category matches provided
- * target.
- */
-void
-eventtree_if_cat(EventTree *et, const char *t_tgt, const struct config *c,
-             void (*fun)(const Event *, const struct config *))
+int
+cat_cmp(const Event *e, const struct config *c)
 {
-	if (et == NULL) return;
-	if (strcmp(et->event->cat, t_tgt) == 0) {
-		fun(et->event, c);
-		return;
-	}
+	if (e->cat == NULL || c->tarcat == NULL) return -1;
+	return strcmp(e->cat, c->tarcat);
+}
 
-	eventtree_if_cat(et->left, t_tgt, c, fun);
-	eventtree_if_cat(et->right, t_tgt, c, fun);
+int
+tar_cmp(const Event *e, const struct config *c)
+{
+	return strcmp(e->title, c->target);
 }

@@ -84,9 +84,10 @@ main(int argc, char **argv)
 	}
 
 	if (strlen(conf.tarcat) > 0)
-		eventtree_if_cat(et_root, conf.tarcat, &conf, event_vdisp);
+		eventtree_if(et_root, &conf, cat_cmp, event_vdisp);
 	else if (strlen(conf.target) > 0)
-		eventtree_if(et_root, conf.target, &conf, event_vdisp);
+		eventtree_if(et_root, &conf, tar_cmp, event_vdisp);
+	//	eventtree_if(et_root, conf.target, &conf, event_vdisp);
 	else
 		eventtree_in_order(et_root, &conf, event_disp);
 
