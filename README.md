@@ -1,37 +1,40 @@
 <h1 align="center">disorg</h1>
 <p align="center">disorganized program inpsired by emacs' org-mode<br/>a tool to maintain a schedule and agenda over a directory of plain-text files</p>
 
-## Usage
-`disorg` aggregates an agenda based off of events (plain text .ev files) located in a base directory (by default `~/.disorg`). When `disorg.sh` (not `disorg-main`) is run with no arguments, it displays the agenda, an ordered list containing overviews of all events in the base directory.
-
 ![screenshot](screenshot.png)
 
-The `-W` flag can be passed to list wiki files (.wi plain text files) similarly in alphabetical order.
+## Usage
+The base directory (by default `~/.disorg`, configurable via the `BASE_DIRECTORY` variable) contains a set of plain text files, events and wikis. Event files contain titles, descriptions, miscellaneous text, as well as a date and time at which they occur. Calling the script `disorg.sh` without any arguments aggregates all of these events into a sorted agenda. Wikis are similar, but they have no dates or times associated. Calling `disorg.sh -W` aggregates all of the wikis in the base directory to an alphabetically sorted list.
 
-For a detailed view of one item (wiki or event), the name can be passed to the script (as a single argument: `"OCS25 Readings"` over `OCS25 Readings`).
+Events and wikis can contain miscellaneous text, anything that should be associated with the information (meeting links, page numbers, etc). To access this information, `disorg.sh [-W]` can be called with the name of an event or wiki (as specified by the `-W` flag) to display a verbose version of that file with the miscellaneous text: i.e., `disorg.sh -W "lorem ipsum"`.
 
-Every event and wiki has a category determined by its parent directory. To filter by category, `-C "category"` can be passed.
+Categories are given by the parent directory of an event. For instance, `~/.disorg/Calculus/Homework 7.ev` would specify an event (probably called Homework 7) with the category Calculus, however `~/.disorg/Calculus/Homeworks/7.ev` has the category of Homeworks. In general, a verbose file hirearchy in this context is not a good thing. In the agenda view, categories are displayed with one of the 16 basic terminal colors, derived by hashing the title to an ANSI color code.
 
-Adding, moving, deleting, or otherwise modifying events is not done through this program, it should be done through a text editor.
+Events may have priorities, which affect the color of due dates in the agenda view.
 
-### Events
-.ev files have the following form:
+## File Formats
+
+Titles are specified as
 ```
-!TITLE title
-!DESCRIPTION a short description
-!PRIORITY HIGH/MED/LOW
-
-!DATE 1/1/2020
+!TITLE A title
+```
+Descriptions are specified as
+```
+!DESCRIPTION A description
+```
+Dates (by default in format D-M-Y but configurable via the `DATE_FORMAT` option) are specifed as
+```
+!DATE 1-1-21
+```
+Times are specified as
+```
 !TIME 00:00
-
-any extra associated information
 ```
-
-### Wiki
-.wi files are identical to event files, but only specify a title.
-
-## Building/Installing
-`make && sudo make install`
+Priorities as:
+```
+!PRIORITY LOW/MED/HIGH
+```
+Miscellaneous text requires no special formatting.
 
 ## Configuration
 Configuration is done through a shell script, located at `~/.config/disorg/disorg`. The wrapper script around the binary sets default values for the configuration options, source the config file, and then export the values, to be loaded by `getenv()` in the binary.
@@ -39,7 +42,7 @@ Configuration is done through a shell script, located at `~/.config/disorg/disor
 Current config options are:
 ```bash
 BASE_DIRECTORY="$HOME/.disorg" # where disorg looks for event/wiki files
-DATE_FORMAT="D-M-Y"
+DATE_FORMAT="D-M-Y"            # delimiter is also specified here (`D-M-Y`/`D/M/Y`)
 TIME_FORMAT="H:M"
 FOUR_DIGIT_YEAR="TRUE"         # 2021 vs 21
 TODAY_COLOR='91'               # the ANSI escape code color used to mark the current time/today
@@ -51,6 +54,9 @@ DEBUG="FALSE"                  # run with valgrind to check for memory leaks
 ```
 
 By default: dates are separated by dashes and in day-month-year format. Times are expected to be in 24-hour form.
+
+## Building/Installing
+`make && sudo make install`
 
 ## TODOs
 * ✨ make software good ✨

@@ -8,8 +8,8 @@
 #include "util.h"
 #include "event.h"
 
-/* read string in form `!KEY VALUE' to a KeyValue struct. If there is no key
- * specified, it is assumed to be MISC.
+/* read string in form `!KEY VALUE' to a dynamically allocated KeyValue struct.
+ * If there is no key specified, it is assumed to be MISC.
  */
 struct KeyValue *
 key_value_read(const char *line)
@@ -21,11 +21,11 @@ key_value_read(const char *line)
 	if (line[0] == '!') {
 		key = malloc(sizeof(line));
 		sscanf(line, "!%s ", key);
-		key_len = strlen(key) + 1;
+		/* + 1 for null terminator, + 1 for trailing space */
+		key_len = strlen(key) + 2;
 		val_len = strlen(line) - strlen(key);
 		val = malloc(val_len);
-		/* + 1 offsets the space trailing the !KEY */
-		strcpy(val, line + key_len + 1);
+		strcpy(val, line + key_len);
 	} else {
 		key = strdup("MISC");
 		val = strdup(line);
