@@ -189,25 +189,28 @@ tm_dascii(const struct tm *t, const struct config *c)
 void
 print_long(const char *s, size_t maxlen)
 {
-	if (strlen(s) < maxlen) {
-		printf("%s\n", s);
-		return;
-	}
+	for (size_t len = strlen(s); len > 0; ) {
+		if (len <= maxlen) {
+			printf("%s\n", s);
+			break;
+		}
 
-	int pos, len;
-	pos = 0;
-	while (pos < strlen(s)) {
-		len = maxlen;
-		for (size_t i = 0; i < maxlen; i++) {
-			char c = s[pos + i];
-			if (c == '\n') {
-				len = i;
+		size_t end, next;
+		for (end = maxlen; ; end--) {
+			if (end == 0) {
+				end  = maxlen;
+				next = maxlen;
 				break;
-			} else if (c == ' ') {
-				len = i;
+			}
+
+			if (s[end] == ' ') {
+				next = end + 1;
+				break;
 			}
 		}
-		printf("%.*s\n", len, s + pos);
-		pos += ++len;
+
+		printf("%.*s\n", end, s);
+		s += next;
+		len -= next;
 	}
 }

@@ -8,17 +8,13 @@
 #include "util.h"
 #include "event.h"
 
-static EventTree *build_tree(EventTree *,
-		      struct config *conf,
-		      FILE *,
-		      int (*)(Event *, Event *));
+static EventTree *build_tree(EventTree *, struct config *conf, FILE *,
+                             int (*)(Event *, Event *));
 
 /* build an EventTree from paths in a specified file. */
 static EventTree *
-build_tree(EventTree *et_root,
-           struct config *conf,
-	   FILE *from,
-	   int (*comp)(Event *, Event *))
+build_tree(EventTree *et_root, struct config *conf, FILE *from,
+	   int (*cmp)(Event *, Event *))
 {
 	char *path_l, *cat_l;
 	FILE *event_file;
@@ -38,7 +34,7 @@ build_tree(EventTree *et_root,
 		event_insert_category(e, cat_l);
 		event_fill_from_text(e, event_file, conf);
 
-		et_root = eventtree_insert(et_root, e, comp);
+		et_root = eventtree_insert(et_root, e, cmp);
 		fclose(event_file);
 		free(cat_l);
 	}
@@ -51,6 +47,7 @@ int
 main(int argc, char **argv)
 {
 	EventTree *et_root;
+	et_root = NULL;
 	struct config conf;
 
 	conf.date_format     = getenv("DATE_FORMAT");
@@ -72,7 +69,6 @@ main(int argc, char **argv)
 
 	conf.wiki = conf_enabled(getenv("WIKI"));
 
-	et_root = NULL;
 	if (conf.wiki) {
 		et_root = build_tree(et_root, &conf, stdin,
 				     event_compare_alpha);
@@ -87,7 +83,6 @@ main(int argc, char **argv)
 		eventtree_if(et_root, &conf, cat_cmp, event_vdisp);
 	else if (strlen(conf.target) > 0)
 		eventtree_if(et_root, &conf, tar_cmp, event_vdisp);
-	//	eventtree_if(et_root, conf.target, &conf, event_vdisp);
 	else
 		eventtree_in_order(et_root, &conf, event_disp);
 
