@@ -1,7 +1,7 @@
 <h1 align="center">disorg</h1>
 <p align="center">disorganized program inpsired by emacs' org-mode<br/>a tool to maintain a schedule and agenda over a directory of plain-text files</p>
 
-![screenshot](screenshot.png)
+<p align="center"><img src="screenshot.png"/></p>
 
 ## Usage
 The base directory (by default `~/.disorg`, configurable via the `BASE_DIRECTORY` variable) contains a set of plain text files, events and wikis. Event files contain titles, descriptions, miscellaneous text, as well as a date and time at which they occur. Calling the script `disorg.sh` without any arguments aggregates all of these events into a sorted agenda. Wikis are similar, but they have no dates or times associated. Calling `disorg.sh -W` aggregates all of the wikis in the base directory to an alphabetically sorted list.
@@ -60,4 +60,3 @@ By default: dates are separated by dashes and in day-month-year format. Times ar
 
 ## TODOs
 * ✨ make software good ✨
-* tags for wikis and events
