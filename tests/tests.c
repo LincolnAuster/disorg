@@ -28,11 +28,10 @@ key_value_read_test(void)
 		struct KeyValue *result = key_value_read(test.s);
 
 		if (KEY_VALUE_CMP((*result), test.kv) == 0) {
-			printf("PASSED `%s`\n", test.s);
+			printf(PASSED, test.s);
 			passed++;
 		} else {
-			printf("%s FAILED, gave %s:%s\n",
-			       test.s, result->key, result->val);
+			printf(FAILED, test.s, result->key);
 		}
 		total++;
 		free(result);
@@ -49,10 +48,10 @@ buffer_append_test(void)
 		buffer_append(&s, test.b, &test.s);
 
 		if (strcmp(s, test.r) == 0) {
-			printf("PASSED: `%s`\n", test.r);
+			printf(PASSED, test.r);
 			passed++;
 		} else {
-			printf("%s FAILED, gave %s\n", test.r, s);
+			printf(FAILED, test.r, s);
 		}
 
 		total++;
@@ -70,10 +69,10 @@ buffer_append_str_test(void)
 		buffer_append_str(&a, test.b, &test.s);
 
 		if (strcmp(a, test.r) == 0) {
-			printf("PASSED: `%s`\n", test.r);
+			printf(PASSED, test.r);
 			passed++;
 		} else {
-			printf("%s FAILED, gave `%s`\n", test.r,  a);
+			printf(FAILED, test.r, a);
 		}
 
 		total++;

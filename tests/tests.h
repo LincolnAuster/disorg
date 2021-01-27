@@ -1,5 +1,8 @@
 #define LEN(a) sizeof(a) / sizeof(a[0])
 
+#define PASSED "PASSED `%s`\n"
+#define FAILED "FAILED (%s gave %s)\n"
+
 #define GREEN "\033[1;32m"
 #define RESET "\033[0;m"
 
