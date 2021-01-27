@@ -80,6 +80,25 @@ buffer_append_str_test(void)
 	}
 }
 
+static void
+parent_dir_test(void)
+{
+	int count = LEN(parent_dir_tests);
+	for (int i = 0; i < count; i++) {
+		struct ParentDirTest test = parent_dir_tests[i];
+		char *p = parent_dir(test.a);
+		if (strcmp(p, test.p) == 0) {
+			printf(PASSED, test.p);
+			passed++;
+		} else {
+			printf(FAILED, test.p, p);
+		}
+
+		total++;
+		free(p);
+	}
+}
+
 int
 main(void)
 {
@@ -94,6 +113,9 @@ main(void)
 
 	printf(GREEN "         buffer_append_str\n" RESET);
 	buffer_append_str_test();
+
+	printf(GREEN "         parent_dir\n" RESET);
+	parent_dir_test();
 
 	float percent = (float) passed / total * 100;
 	printf("%d/%d %.2f%%\n", passed, total, percent);
