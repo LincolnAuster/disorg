@@ -1,3 +1,4 @@
+#include <libgen.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -99,25 +100,12 @@ buftocol(const char *s)
 char *
 parent_dir(const char *p)
 {
-	char *buf;
-	size_t start, end, len;
-	start = end = 0;
+	char path[strlen(p) + 1];
+	strcpy(path, p);
+	char *without_name = dirname(path);
+	char *parent_dir   = basename(without_name);
 
-	for (size_t i = strlen(p); i > 0; i--) {
-		if (p[i] != '/') continue;
-		if (end == 0) {
-			end = i;
-		} else if (start == 0) {
-			start = ++i; break;
-		}
-	}
-
-	len = end - start;
-	buf = malloc(len + 1);
-	strncpy(buf, p + start, len);
-	buf[len] = '\0';
-
-	return buf;
+	return strdup(parent_dir);
 }
 
 /* return an empty tm_struct (i.e., initialized to 0:0 0/0/1900) */
