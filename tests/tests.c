@@ -22,9 +22,7 @@ static void parent_dir_test(void);
 static void
 key_value_read_test(void)
 {
-	int count = sizeof(key_value_read_tests) /
-	                           sizeof(key_value_read_tests[0]);
-
+	int count = LEN(key_value_read_tests);
 	for (int i = 0; i < count; i++) {
 		struct KeyValueReadTest test = key_value_read_tests[i];
 		struct KeyValue *result = key_value_read(test.s);
@@ -44,8 +42,7 @@ key_value_read_test(void)
 static void
 buffer_append_test(void)
 {
-	int count = sizeof(buffer_append_tests) /
-	           sizeof(buffer_append_tests[0]);
+	int count = LEN(buffer_append_tests);
 	for (int i = 0; i < count; i++) {
 		struct BufferAppendTest test = buffer_append_tests[i];
 		char *s = strdup(test.a);
@@ -66,8 +63,7 @@ buffer_append_test(void)
 static void
 buffer_append_str_test(void)
 {
-	int count = sizeof(buffer_append_str_tests) /
-	           sizeof(buffer_append_str_tests[0]);
+	int count = LEN(buffer_append_str_tests);
 	for (int i = 0; i < count; i++) {
 		struct BufferAppendStrTest test = buffer_append_str_tests[i];
 		char *a = strdup(test.a);
@@ -83,12 +79,6 @@ buffer_append_str_test(void)
 		total++;
 		free(a);
 	}
-}
-
-static void
-parent_dir_test(void)
-{
-
 }
 
 int

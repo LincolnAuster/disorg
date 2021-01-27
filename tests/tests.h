@@ -1,3 +1,5 @@
+#define LEN(a) sizeof(a) / sizeof(a[0])
+
 #define GREEN "\033[1;32m"
 #define RESET "\033[0;m"
 
@@ -46,5 +48,10 @@ const struct BufferAppendTest buffer_append_tests[] = {
 const struct BufferAppendStrTest buffer_append_str_tests[] = {
 	{ "abc",   "def",     4, "abcdef"   },
 	{ " thi",  "s is",    5, " this is" },
-	{ "\0abc", "garbage", 4, ""         },
+	{ "\0abc", "garbage", 4, "garbage"  },
+};
+
+const struct ParentDirTest parent_dir_tests[] = {
+	{ "/home/lincoln/Documents/disorg/tests/test.h", "tests" },
+	{ "/mnt/nas/test.png",                           "nas"   }
 };
