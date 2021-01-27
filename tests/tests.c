@@ -6,45 +6,18 @@
 #include "../src/conf.h"
 #include "../src/util.h"
 
-#define GREEN "\033[1;32m"
-#define RESET "\033[0;m"
+#include "tests.h"
 
 static int passed, total;
 
-struct KeyValueTest {
-	char *s;
-	struct KeyValue kv;
-};
-
-struct BufferAppendTest {
-	char *a; char b; size_t s;
-	char *r;
-};
-
-struct BufferAppendStrTest {
-	char *a; char *b; size_t s;
-	char *r;
-};
-
-static const struct KeyValueTest key_value_read_tests[] = {
-	{ "!TITLE this is a test",   { "TITLE", "this is a test"   } },
-	{ "!lorem ipsum dolor\\sit", { "lorem", "ipsum dolor\\sit" } },
-	{ "ABC ABC",                 { "MISC",  "ABC ABC"          } },
-};
-
-static const struct BufferAppendTest buffer_append_tests[] = {
-	{ "abc",  'd',  4, "abcd" },
-	{ "thi ", '\0', 4, "thi " }
-};
-
-static const struct BufferAppendStrTest buffer_append_str_tests[] = {
-	{ "abc",  "def",  4, "abcdef" },
-	{ " thi", "s is", 5, " this is" }
-};
-
 /* access static vars to test respective functions */
 static void key_value_read_test(void);
+
 static void buffer_append_test(void);
+static void buffer_append_str_test(void);
+/* buftocol doesn't really need testing, its behaviour is supposed to be random
+ * anyway */
+static void parent_dir_test(void);
 
 static void
 key_value_read_test(void)
@@ -53,14 +26,14 @@ key_value_read_test(void)
 	                           sizeof(key_value_read_tests[0]);
 
 	for (int i = 0; i < count; i++) {
-		struct KeyValueTest test = key_value_read_tests[i];
+		struct KeyValueReadTest test = key_value_read_tests[i];
 		struct KeyValue *result = key_value_read(test.s);
 
 		if (KEY_VALUE_CMP((*result), test.kv) == 0) {
 			printf("PASSED `%s`\n", test.s);
 			passed++;
 		} else {
-			printf("%s failed, gave %s:%s\n",
+			printf("%s FAILED, gave %s:%s\n",
 			       test.s, result->key, result->val);
 		}
 		total++;
@@ -82,7 +55,7 @@ buffer_append_test(void)
 			printf("PASSED: `%s`\n", test.r);
 			passed++;
 		} else {
-			printf("%s failed, gave %s", test.r, s);
+			printf("%s FAILED, gave %s\n", test.r, s);
 		}
 
 		total++;
@@ -98,20 +71,24 @@ buffer_append_str_test(void)
 	for (int i = 0; i < count; i++) {
 		struct BufferAppendStrTest test = buffer_append_str_tests[i];
 		char *a = strdup(test.a);
-		char *b = strdup(test.b);
-		buffer_append_str(&a, b, &test.s);
+		buffer_append_str(&a, test.b, &test.s);
 
 		if (strcmp(a, test.r) == 0) {
 			printf("PASSED: `%s`\n", test.r);
 			passed++;
 		} else {
-			printf("%s failed, gave %s", test.r,  a);
+			printf("%s FAILED, gave `%s`\n", test.r,  a);
 		}
 
 		total++;
 		free(a);
-		free(b);
 	}
+}
+
+static void
+parent_dir_test(void)
+{
+
 }
 
 int
