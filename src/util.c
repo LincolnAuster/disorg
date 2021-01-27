@@ -209,7 +209,7 @@ print_long(const char *s, size_t maxlen)
 			}
 		}
 
-		printf("%.*s\n", end, s);
+		printf("%.*s\n", (int) end, s);
 		s += next;
 		len -= next;
 	}
