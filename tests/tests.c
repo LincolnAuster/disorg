@@ -6,6 +6,9 @@
 #include "../src/conf.h"
 #include "../src/util.h"
 
+#define GREEN "\033[1;32m"
+#define RESET "\033[0;m"
+
 static int passed, total;
 
 struct KeyValueTest {
@@ -116,14 +119,14 @@ main(void)
 {
 	passed = total = 0;
 
-	printf("TESTING: util.h\n");
-	printf("         key_value_read\n");
+	printf(GREEN "TESTING: util.h\n" RESET);
+	printf(GREEN "         key_value_read\n" RESET );
 	key_value_read_test();
 
-	printf("         buffer_append\n");
+	printf(GREEN "         buffer_append\n" RESET);
 	buffer_append_test();
 
-	printf("         buffer_append_str\n");
+	printf(GREEN "         buffer_append_str\n" RESET);
 	buffer_append_str_test();
 
 	float percent = (float) passed / total * 100;
