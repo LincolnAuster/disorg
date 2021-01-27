@@ -34,6 +34,11 @@ static const struct BufferAppendTest buffer_append_tests[] = {
 	{ "thi ", '\0', 4, "thi " }
 };
 
+static const struct BufferAppendStrTest buffer_append_str_tests[] = {
+	{ "abc",  "def",  4, "abcdef" },
+	{ " thi", "s is", 5, " this is" }
+};
+
 /* access static vars to test respective functions */
 static void key_value_read_test(void);
 static void buffer_append_test(void);
@@ -82,6 +87,30 @@ buffer_append_test(void)
 	}
 }
 
+static void
+buffer_append_str_test(void)
+{
+	int count = sizeof(buffer_append_str_tests) /
+	           sizeof(buffer_append_str_tests[0]);
+	for (int i = 0; i < count; i++) {
+		struct BufferAppendStrTest test = buffer_append_str_tests[i];
+		char *a = strdup(test.a);
+		char *b = strdup(test.b);
+		buffer_append_str(&a, b, &test.s);
+
+		if (strcmp(a, test.r) == 0) {
+			printf("PASSED: `%s`\n", test.r);
+			passed++;
+		} else {
+			printf("%s failed, gave %s", test.r,  a);
+		}
+
+		total++;
+		free(a);
+		free(b);
+	}
+}
+
 int
 main(void)
 {
@@ -95,6 +124,7 @@ main(void)
 	buffer_append_test();
 
 	printf("         buffer_append_str\n");
+	buffer_append_str_test();
 
 	float percent = (float) passed / total * 100;
 	printf("%d/%d %.2f%%\n", passed, total, percent);
