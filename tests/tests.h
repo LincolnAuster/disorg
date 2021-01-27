@@ -10,7 +10,7 @@
  * Formatting is as follows:
  *     struct *Test {
  *            type input_a; type input_b; ...;
- *            type output;
+ *            type output;                     i.e., char *r(esult)
  *     }
  */
 
@@ -32,6 +32,11 @@ struct BufferAppendStrTest {
 struct ParentDirTest {
 	char *a;
 	char *p;
+};
+
+struct TmTasciiTest {
+	struct tm tm;
+	char *r;
 };
 
 /* test cases are defined below, as constant arrays of the corresponding
@@ -57,4 +62,9 @@ const struct BufferAppendStrTest buffer_append_str_tests[] = {
 const struct ParentDirTest parent_dir_tests[] = {
 	{ "/home/lincoln/Documents/disorg/tests/test.h", "tests" },
 	{ "/mnt/nas/test.png",                           "nas"   }
+};
+
+const struct TmTasciiTest tm_tascii_tests[] = {
+	{ { 0, 30, 12, 1, 0, 100, 0 }, "12:30" },
+	{ { 1, 35, 0,  1, 0, 100, 0 }, "00:35" }
 };

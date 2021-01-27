@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include "../src/conf.h"
 #include "../src/util.h"
@@ -18,6 +19,8 @@ static void buffer_append_str_test(void);
 /* buftocol doesn't really need testing, its behaviour is supposed to be random
  * anyway */
 static void parent_dir_test(void);
+
+static void tm_tascii_test(void);
 
 static void
 key_value_read_test(void)
@@ -99,6 +102,25 @@ parent_dir_test(void)
 	}
 }
 
+static void
+tm_tascii_test(void)
+{
+	int count = LEN(tm_tascii_tests);
+	for (int i = 0; i < count; i++) {
+		struct TmTasciiTest test = tm_tascii_tests[i];
+		char *r = tm_tascii(&(test.tm));
+		if (strcmp(r, test.r) == 0) {
+			printf(PASSED, test.r);
+			passed++;
+		} else {
+			printf(FAILED, test.r, r);
+		}
+
+		total++;
+		free(r);
+	}
+}
+
 int
 main(void)
 {
@@ -116,6 +138,9 @@ main(void)
 
 	printf(GREEN "         parent_dir\n" RESET);
 	parent_dir_test();
+
+	printf(GREEN "         tm_tascii\n" RESET);
+	tm_tascii_test();
 
 	float percent = (float) passed / total * 100;
 	printf("%d/%d %.2f%%\n", passed, total, percent);
