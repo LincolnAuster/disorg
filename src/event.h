@@ -49,6 +49,7 @@ int event_compare_time (const Event *, const Event *);
 int event_compare_alpha(const Event *, const Event *);
 
 EventTree *eventtree_new(void);
+EventTree *eventtree_fromf(EventTree *, const struct config *conf, FILE *);
 EventTree *eventtree_insert(EventTree *, Event *);
 void      *eventtree_free(EventTree *);
 EventTree *eventtree_new_from_event(Event *); 

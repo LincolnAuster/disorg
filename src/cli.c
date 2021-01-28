@@ -8,39 +8,6 @@
 #include "util.h"
 #include "event.h"
 
-static EventTree *build_tree(EventTree *, struct config *conf, FILE *);
-
-/* build an EventTree from paths in a specified file. */
-static EventTree *
-build_tree(EventTree *et_root, struct config *conf, FILE *from)
-{
-	char *path_l, *cat_l;
-	FILE *event_file;
-	ssize_t len;
-	size_t bufsize;
-
-	path_l  = NULL;
-	bufsize = 0;
-	while ((len = getline(&path_l, &bufsize, from)) > 0) {
-		path_l[--len] = '\0'; /* strip newline from path */
-		cat_l = parent_dir(path_l);
-
-		event_file = fopen(path_l, "r");
-		if (event_file == NULL) continue;
-
-		Event* e = event_new_empty(conf);
-		event_insert_category(e, cat_l);
-		event_fill_from_text(e, event_file, conf);
-
-		et_root = eventtree_insert(et_root, e);
-		fclose(event_file);
-		free(cat_l);
-	}
-
-	free(path_l);
-	return et_root;
-}
-
 int
 main(int argc, char **argv)
 {
@@ -77,7 +44,7 @@ main(int argc, char **argv)
 		et_root->cmp = event_compare_time;
 
 	/* build tree */
-	et_root = build_tree(et_root, &conf, stdin);
+	et_root = eventtree_fromf(et_root, &conf, stdin);
 	if (!conf.wiki)
 		et_root = eventtree_insert(et_root, event_now(&conf));
 

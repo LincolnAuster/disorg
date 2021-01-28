@@ -2,14 +2,22 @@
  * main.c
  */
 struct config {
+	/* time strings and formatting */
 	const char *date_format;
 	const char *time_format;
 	const char *four_digit_year;
+
+	/* display settings */
 	const char *today_color;
 	const char *pcolors[3];
 	unsigned int col_width;
+
+	/* options for building limit */
+	int days_before;
+	int days_after;
 	char *target;
 	char *tarcat;
+
 	bool wiki;
 };
 

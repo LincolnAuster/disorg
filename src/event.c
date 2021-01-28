@@ -284,6 +284,37 @@ eventtree_new(void)
 	return et;
 }
 
+/* build tree from file descriptor */
+EventTree *
+eventtree_fromf(EventTree *et, const struct config *conf, FILE *from)
+{
+	char *path_l, *cat_l;
+	FILE *event_file;
+	ssize_t len;
+	size_t bufsize;
+
+	path_l = NULL;
+	bufsize = 0;
+	while ((len = getline(&path_l, &bufsize, from)) > 0) {
+		path_l[--len] = '\0'; /* strip newline from path */
+		cat_l = parent_dir(path_l);
+
+		event_file = fopen(path_l, "r");
+		if (event_file == NULL) continue;
+
+		Event *e = event_new_empty(conf);
+		event_insert_category(e, cat_l);
+		event_fill_from_text(e, event_file, conf);
+
+		et = eventtree_insert(et, e);
+		fclose(event_file);
+		free(cat_l);
+	}
+
+	free(path_l);
+	return et;
+}
+
 /* initialize tree node */
 EventTree *
 eventtree_new_from_event(Event *e)
