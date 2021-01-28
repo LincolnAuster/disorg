@@ -8,13 +8,11 @@
 #include "util.h"
 #include "event.h"
 
-static EventTree *build_tree(EventTree *, struct config *conf, FILE *,
-                             int (*)(Event *, Event *));
+static EventTree *build_tree(EventTree *, struct config *conf, FILE *);
 
 /* build an EventTree from paths in a specified file. */
 static EventTree *
-build_tree(EventTree *et_root, struct config *conf, FILE *from,
-	   int (*cmp)(Event *, Event *))
+build_tree(EventTree *et_root, struct config *conf, FILE *from)
 {
 	char *path_l, *cat_l;
 	FILE *event_file;
@@ -34,7 +32,7 @@ build_tree(EventTree *et_root, struct config *conf, FILE *from,
 		event_insert_category(e, cat_l);
 		event_fill_from_text(e, event_file, conf);
 
-		et_root = eventtree_insert(et_root, e, cmp);
+		et_root = eventtree_insert(et_root, e);
 		fclose(event_file);
 		free(cat_l);
 	}
@@ -47,9 +45,9 @@ int
 main(int argc, char **argv)
 {
 	EventTree *et_root;
-	et_root = NULL;
 	struct config conf;
 
+	/* load config from environment */
 	conf.date_format     = getenv("DATE_FORMAT");
 	conf.time_format     = getenv("TIME_FORMAT");
 	conf.four_digit_year = getenv("FOUR_DIGIT_YEAR");
@@ -66,19 +64,21 @@ main(int argc, char **argv)
 
 	conf.target = strdup(getenv("TARGET"));
 	conf.tarcat = strdup(getenv("CATEGORY"));
-
 	conf.wiki = conf_enabled(getenv("WIKI"));
 
-	if (conf.wiki) {
-		et_root = build_tree(et_root, &conf, stdin,
-				     event_compare_alpha);
-	} else {
-		et_root = build_tree(et_root, &conf, stdin,
-				     event_compare_time);
-		Event *now = event_now(&conf);
-		eventtree_insert(et_root, now, event_compare_time);
-	}
+	/* allocate and configure the event tree */
+	et_root = eventtree_new();
+	if (conf.wiki)
+		et_root->cmp = event_compare_alpha;
+	else
+		et_root->cmp = event_compare_time;
 
+	/* build tree */
+	et_root = build_tree(et_root, &conf, stdin);
+	if (!conf.wiki)
+		et_root = eventtree_insert(et_root, event_now(&conf));
+
+	/* display tree */
 	if (strlen(conf.tarcat) > 0)
 		eventtree_if(et_root, &conf, cat_cmp, event_vdisp);
 	else if (strlen(conf.target) > 0)

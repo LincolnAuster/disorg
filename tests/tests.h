@@ -39,6 +39,11 @@ struct TmTasciiTest {
 	char *r;
 };
 
+struct TmDasciiTest {
+	struct tm tm; struct config c;
+	char *r;
+};
+
 /* test cases are defined below, as constant arrays of the corresponding
  * structures. */
 

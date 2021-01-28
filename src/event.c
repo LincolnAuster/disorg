@@ -227,7 +227,7 @@ event_insert_misc(Event *e, char *text, const struct config *conf)
 
 /* returns 0 if equal, below if a < b and 1 if b > a */
 int
-event_compare_time(Event *a, Event *b)
+event_compare_time(const Event *a, const Event *b)
 {
 	time_t at = mktime(a->time);
 	time_t bt = mktime(b->time);
@@ -235,13 +235,15 @@ event_compare_time(Event *a, Event *b)
 	return (int) difftime(at, bt);
 }
 
-/* compare the events alphabetically, by category and then by name */
+/* compare the events alphabetically, by category and then by name
+ * case-insensitive */
 int
-event_compare_alpha(Event *a, Event *b)
+event_compare_alpha(const Event *a, const Event *b)
 {
-	int cat = strcmp(b->cat, a->cat);
+	int cat = strcmp(a->cat, b->cat);
+	return cat;
 	if (cat == 0)
-		return strcmp(b->title, a->title);
+		return strcmp(a->title, b->title);
 	else
 		return cat;
 }
@@ -254,6 +256,8 @@ eventtree_new(void)
 	et->event = NULL;
 	et->left  = NULL;
 	et->right = NULL;
+	/* by default, compare by time */
+	et->cmp = &event_compare_time;
 	return et;
 }
 
@@ -261,24 +265,28 @@ eventtree_new(void)
 EventTree *
 eventtree_new_from_event(Event *e)
 {
-	EventTree *et = malloc(sizeof(EventTree));
+	EventTree *et = eventtree_new();
 	et->event = e;
-	et->left = NULL;
-	et->right = NULL;
 	return et;
 }
 
 /* insert an event into provided node */
 EventTree *
-eventtree_insert(EventTree *et, Event *e, int (*comp)(Event *, Event *))
+eventtree_insert(EventTree *et, Event *e)
 {
+	/* two potential instances of base case, either tree itself is null
+	 * or the event in the tree doesn't exist */
 	if (et == NULL) return eventtree_new_from_event(e);
-	int cmp = comp(et->event, e);
+	if (et->event == NULL) {
+		et->event = e;
+		return et;
+	}
 
+	int cmp = et->cmp(et->event, e);
 	if (cmp < 0)
-		et->left  = eventtree_insert(et->left, e, comp);
+		et->left  = eventtree_insert(et->left, e);
 	else if (cmp >= 0)
-		et->right = eventtree_insert(et->right, e, comp);
+		et->right = eventtree_insert(et->right, e);
 
 	return et;
 }
