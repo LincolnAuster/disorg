@@ -8,7 +8,30 @@
 #include "util.h"
 #include "event.h"
 
-/* initialize a new empty Event on 0/0/current year 0:0:0 */
+/* verify that an event is within the limit, if a field of limit is NULL
+ * ignore. */
+bool
+matches_lim(const struct limit *l, const Event *e)
+{
+	if (l == NULL) return true;
+	if (e == NULL) return false;
+
+	if ((l->title_tar != NULL && e->title != NULL) &&
+	     strcmp(e->title, l->title_tar) != 0)
+		return false;
+	if ((l->categ_tar != NULL && e->cat != NULL) &&
+	     strcmp(e->cat, l->categ_tar) != 0)
+		return false;
+	if ((l->min != NULL && e->time != NULL) &&
+		difftime(mktime(l->min), mktime(e->time)) < 0)
+		return false;
+	if ((l->max != NULL && e->time != NULL) &&
+		difftime(mktime(l->max), mktime(e->time)) > 0)
+		return false;
+	return true;
+}
+
+/* initialize a new empty Event on 0/0/1900 year 0:0:0 */
 Event *    
 event_new_empty(const struct config *conf)
 {
@@ -307,13 +330,14 @@ eventtree_free(EventTree *et)
  * call the specified function on the values.
  */
 void
-eventtree_in_order(EventTree *et, const struct config *c,
+eventtree_in_order(EventTree *et, const struct config *c, const struct limit *l,
 		   void (*fun)(const Event *, const struct config *))
 {
 	if (et == NULL) return;
-	eventtree_in_order(et->right, c, fun);
-	fun(et->event, c);
-	eventtree_in_order(et->left, c, fun);
+	eventtree_in_order(et->right, c, l, fun);
+	if (matches_lim(l, et->event))
+		fun(et->event, c);
+	eventtree_in_order(et->left, c, l, fun);
 }
 
 /* perform function act on an event in the tree IFF cmp(et->event, c) returns

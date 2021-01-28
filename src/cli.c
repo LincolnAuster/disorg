@@ -46,6 +46,7 @@ main(int argc, char **argv)
 {
 	EventTree *et_root;
 	struct config conf;
+	struct limit lim;
 
 	/* load config from environment */
 	conf.date_format     = getenv("DATE_FORMAT");
@@ -64,6 +65,8 @@ main(int argc, char **argv)
 
 	conf.target = strdup(getenv("TARGET"));
 	conf.tarcat = strdup(getenv("CATEGORY"));
+	if (strlen(conf.target) < 1) conf.target = NULL;
+	if (strlen(conf.tarcat) < 1) conf.tarcat = NULL;
 	conf.wiki = conf_enabled(getenv("WIKI"));
 
 	/* allocate and configure the event tree */
@@ -78,13 +81,14 @@ main(int argc, char **argv)
 	if (!conf.wiki)
 		et_root = eventtree_insert(et_root, event_now(&conf));
 
-	/* display tree */
-	if (strlen(conf.tarcat) > 0)
-		eventtree_if(et_root, &conf, cat_cmp, event_vdisp);
-	else if (strlen(conf.target) > 0)
-		eventtree_if(et_root, &conf, tar_cmp, event_vdisp);
-	else
-		eventtree_in_order(et_root, &conf, event_disp);
+	/* configure the limit */
+	lim.min = NULL; /* TODO limit time to x days before, after, today */
+	lim.max = NULL;
+	lim.title_tar = conf.target;
+	lim.categ_tar = conf.tarcat;
+
+	/* output desired info */
+	eventtree_in_order(et_root, &conf, &lim, event_disp);
 
 	et_root = eventtree_free(et_root);
 	if (conf.target != NULL) free(conf.target);

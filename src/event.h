@@ -1,3 +1,10 @@
+struct limit {
+	struct tm *min;
+	struct tm *max;
+	char *title_tar;
+	char *categ_tar;
+};
+
 /* opaque struct to contain data for a .ev */
 typedef struct {
 	char *title;
@@ -19,6 +26,8 @@ typedef struct EventTree {
 	/* compare function, used for ordered operations */
 	int (*cmp)(const Event *, const Event *);
 } EventTree;
+
+bool matches_lim(const struct limit *, const Event *);
 
 Event *event_new_empty(const struct config *);
 Event *event_now(const struct config *);
@@ -44,6 +53,7 @@ EventTree *eventtree_insert(EventTree *, Event *);
 void      *eventtree_free(EventTree *);
 EventTree *eventtree_new_from_event(Event *); 
 void       eventtree_in_order(EventTree *, const struct config *,
+                              const struct limit *,
 		              void (*)(const Event *, const struct config *));
 
 void eventtree_if(EventTree *, const struct config *,
