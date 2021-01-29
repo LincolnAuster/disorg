@@ -1,6 +1,6 @@
 <h1 align="center">disorg</h1>
 <p align="center">disorganized program inpsired by emacs' org-mode<br/>a tool to maintain a schedule and agenda over a directory of plain-text files</p>
-
+moved to <a href="https://gitlab.com/lincolnauster/disorg">gitlab</a>
 <p align="center"><img src="screenshot.png"/></p>
 
 ## Usage
