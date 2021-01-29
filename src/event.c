@@ -269,10 +269,9 @@ event_compare_time(const Event *a, const Event *b)
 int
 event_compare_alpha(const Event *a, const Event *b)
 {
-	int cat = strcmp(a->cat, b->cat);
-	return cat;
+	int cat = strcasecmp(a->cat, b->cat);
 	if (cat == 0)
-		return strcmp(a->title, b->title);
+		return strcasecmp(a->title, b->title);
 	else
 		return cat;
 }
@@ -335,18 +334,22 @@ EventTree *
 eventtree_insert(EventTree *et, Event *e)
 {
 	/* two potential instances of base case, either tree itself is null
-	 * or the event in the tree doesn't exist */
-	if (et == NULL) return eventtree_new_from_event(e);
-	if (et->event == NULL) {
+	 * or the tree is functionally NULL, i.e., empty */
+	if (et == NULL) {
+		return eventtree_new_from_event(e);
+	} else if (et->event == NULL) {
 		et->event = e;
 		return et;
 	}
 
 	int cmp = et->cmp(et->event, e);
-	if (cmp < 0)
+	if (cmp < 0) {
 		et->left  = eventtree_insert(et->left, e);
-	else if (cmp >= 0)
+		et->left->cmp = et->cmp;
+	} else {
 		et->right = eventtree_insert(et->right, e);
+		et->right->cmp = et->cmp;
+	}
 
 	return et;
 }
