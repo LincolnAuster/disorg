@@ -6,9 +6,9 @@
 ## Usage
 The base directory (by default `~/.disorg`, configurable via the `BASE_DIRECTORY` variable) contains a set of plain text files, events and wikis. Event files contain titles, descriptions, miscellaneous text, as well as a date and time at which they occur. Calling the script `disorg.sh` without any arguments aggregates all of these events into a sorted agenda. Wikis are similar, but they have no dates or times associated. Calling `disorg.sh -W` aggregates all of the wikis in the base directory to an alphabetically sorted list.
 
-Events and wikis can contain miscellaneous text, anything that should be associated with the information (meeting links, page numbers, etc). To access this information, `disorg.sh [-W]` can be called with the name of an event or wiki (as specified by the `-W` flag) to display a verbose version of that file with the miscellaneous text: i.e., `disorg.sh -W "lorem ipsum"`.
+Events and wikis can contain miscellaneous text, anything that should be associated with the information (meeting links, page numbers, etc). To access this information, specify the title of the item after `-T`, i.e., `disorg.sh -W -T "Writing Assignment 5".
 
-Categories are given by the parent directory of an event. For instance, `~/.disorg/Calculus/Homework 7.ev` would specify an event (probably called Homework 7) with the category Calculus, however `~/.disorg/Calculus/Homeworks/7.ev` has the category of Homeworks. In general, a verbose file hirearchy in this context is not a good thing. In the agenda view, categories are displayed with one of the 16 basic terminal colors, derived by hashing the title to an ANSI color code.
+Categories are given by the parent directory of an event. For instance, `~/.disorg/Calculus/Homework 7.ev` would specify an event (probably called Homework 7) with the category Calculus, however `~/.disorg/Calculus/Homeworks/7.ev` has the category of Homeworks. In general, a verbose file hirearchy in this context is not a good thing. In the agenda view, categories are displayed with one of the 16 basic terminal colors, derived by hashing the title to an ANSI color code. To view only events or wikis of a certain category, specify the `-C` flag, i.e., `disorg.sh -C "OMSB9".
 
 Events may have priorities, which affect the color of due dates in the agenda view.
 

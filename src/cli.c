@@ -55,10 +55,10 @@ main(int argc, char **argv)
 	lim.categ_tar = conf.tarcat;
 
 	/* output desired info */
-	if (lim.title_tar == NULL)
-		eventtree_in_order(et_root, &conf, &lim, event_disp);
-	else
+	if (lim.title_tar != NULL)
 		eventtree_in_order(et_root, &conf, &lim, event_vdisp);
+	else
+		eventtree_in_order(et_root, &conf, &lim, event_disp);
 
 	et_root = eventtree_free(et_root);
 	if (conf.target != NULL) free(conf.target);

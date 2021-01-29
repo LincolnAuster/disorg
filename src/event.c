@@ -28,6 +28,7 @@ matches_lim(const struct limit *l, const Event *e)
 	if ((l->max != NULL && e->time != NULL) &&
 		difftime(mktime(l->max), mktime(e->time)) > 0)
 		return false;
+
 	return true;
 }
 

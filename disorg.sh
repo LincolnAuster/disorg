@@ -64,21 +64,20 @@ export PLOW_COLOR
 TARGET=""
 CATEGORY=""
 WIKI="FALSE"
-
-# assume that target is the last non option argument (doesn't begin with -)
-for arg in "$@"; do
-	if [[ "$arg" != "-"* ]]; then
-		TARGET="$arg"
-		break
-	fi
-done
-
 # check from pattern
 if [[ "$PATTERN" == "*.wi" ]]; then
 	WIKI="TRUE"
 fi
 
-# If the -C option is specified, limit the BASE_DIRECTORY to that subdirectory.
+# -T option specifies target/title
+for ((i = 1 ; i < $# ; i++ )); do
+	if [[ "${!i}" == "-T" ]]; then
+		i=$(($i + 1))
+		CATEGORY="${!i}"
+	fi
+done
+
+# If the -C option is specified, set CATEGORY var as needed
 for ((i = 1 ; i < $# ; i++ )); do
 	if [[ "${!i}" == "-C" ]]; then
 		i=$(($i + 1))
