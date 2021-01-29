@@ -151,8 +151,14 @@ event_sdisp(const Event *e, const struct config *c)
 	if (e->cat != NULL)
 		printf("\033[38;5;%dm", buftocol(e->cat));
 	for (int i = 0; i < c->col_width; i++) printf("-");
-	printf("\n%s", e->title);
-	if (e->cat != NULL) printf(" (%s)", e->cat);
+
+	if (e->cat != NULL)
+		printf("\n%-*.*s%s", (int) (c->col_width - strlen(e->cat)),
+				     (int) (c->col_width - strlen(e->cat)),
+				     e->title, e->cat);
+	else
+		printf("\n%s", e->title);
+
 	printf("%s\n", RESET_COLOR);
 }
 
