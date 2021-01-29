@@ -121,6 +121,25 @@ tm_tascii_test(void)
 	}
 }
 
+static void
+tm_dascii_test(void)
+{
+	int count = LEN(tm_dascii_tests);
+	for (int i = 0; i < count; i++) {
+		struct TmDasciiTest test = tm_dascii_tests[i];
+		char *r = tm_dascii(&(test.tm), &(test.c));
+		if (strcmp(r, test.r) == 0) {
+			printf(PASSED, test.r);
+			passed++;
+		} else {
+			printf(FAILED, test.r, r);
+		}
+
+		total++;
+		free(r);
+	}
+}
+
 int
 main(void)
 {
@@ -141,6 +160,9 @@ main(void)
 
 	printf(GREEN "         tm_tascii\n" RESET);
 	tm_tascii_test();
+
+	printf(GREEN "         tm_dascii\n" RESET);
+	tm_dascii_test();
 
 	float percent = (float) passed / total * 100;
 	printf("%d/%d %.2f%%\n", passed, total, percent);

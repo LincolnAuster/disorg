@@ -44,6 +44,19 @@ struct TmDasciiTest {
 	char *r;
 };
 
+/* config structs for testing */
+const struct config CONFIG_TESTS[] = {
+	{ "D/M/Y", "H:M", "TRUE",
+	"91", { "31", "35", "0" }, 80,
+	0, 0, NULL, NULL,
+	false },
+
+	{ "D-M-Y", "H:M", "TRUE",
+	"91", { "31", "35", "0" }, 80,
+	0, 0, NULL, NULL,
+	false },
+};
+
 /* test cases are defined below, as constant arrays of the corresponding
  * structures. */
 
@@ -70,6 +83,13 @@ const struct ParentDirTest parent_dir_tests[] = {
 };
 
 const struct TmTasciiTest tm_tascii_tests[] = {
-	{ { 0, 30, 12, 1, 0, 100, 0 }, "12:30" },
-	{ { 1, 35, 0,  1, 0, 100, 0 }, "00:35" }
+	{ { 0, 30, 12, 1, 0, 100, false }, "12:30" },
+	{ { 1, 35, 0,  1, 0, 100, false }, "00:35" }
+};
+
+const struct TmDasciiTest tm_dascii_tests[] = {
+	{ { 0, 30, 12, 1, 0, 100, false },  CONFIG_TESTS[0], "01/01/2000" },
+	{ { 1, 35, 0,  29, 0, 121, false }, CONFIG_TESTS[0], "29/01/2021" },
+	{ { 0, 30, 12, 1, 0, 100, false },  CONFIG_TESTS[1], "01-01-2000" },
+	{ { 1, 35, 0,  29, 0, 121, false }, CONFIG_TESTS[1], "29-01-2021" }
 };
